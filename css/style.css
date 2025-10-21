@@ -1,0 +1,649 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ==========================================================================
+   DEFINIÇÕES GLOBAIS DE DESIGN (IDENTIDADE VISUAL)
+   ========================================================================== */
+
+:root {
+  /* ... (suas cores primária, secundária, etc. continuam aqui) ... */
+  --cor-primaria: #005A9C;
+  --cor-secundaria: #4A5568;
+  --cor-fundo: #F8F9FA;
+  --cor-superficie: #FFFFFF;
+  --cor-texto-principal: #1A202C;
+  --cor-texto-secundario: #718096;
+  --cor-texto-invertido: #FFFFFF;
+  --cor-erro: #DC3545;
+  --cor-borda: #E2E8F0;
+
+  /* ✅ NOVA VARIÁVEL PARA A SIDEBAR ESCURA */
+  --cor-sidebar-fundo: #1A202C; /* Um cinza bem escuro, quase preto */
+  --cor-sidebar-texto: #A0AEC0; /* Um cinza claro para o texto */
+  --cor-sidebar-hover: #2D3748; /* Fundo do link ao passar o mouse */
+  
+  /* ... (resto das suas variáveis :root) ... */
+  --fonte-principal: 'Inter', sans-serif;
+  --raio-borda: 0.375rem;
+  --sombra-caixa: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --transicao-base: all 0.2s ease-in-out;
+}
+
+
+.botao-principal {
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-invertido);
+  font-family: var(--fonte-principal);
+  font-size: var(--tamanho-base);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--raio-borda);
+  cursor: pointer;
+  transition: var(--transicao-base);
+  box-shadow: var(--sombra-caixa);
+}
+
+.botao-principal:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   ESTILOS DE BOTÃO
+   ========================================================================== */
+
+/* 1. Classe Base (Estilo comum a TODOS os botões) */
+.botao {
+  display: inline-flex;         /* Para alinhar texto e ícones facilmente */
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;                  /* Espaço entre o ícone e o texto */
+  
+  font-family: var(--fonte-principal);
+  font-size: var(--tamanho-pequeno);
+  font-weight: 600;             /* Semi-bold para dar destaque */
+  text-decoration: none;        /* Remove sublinhado se usar a classe em um link <a> */
+  
+  padding: 0.6rem 1.2rem;
+  border: 1px solid transparent;
+  border-radius: var(--raio-borda);
+  
+  cursor: pointer;
+  transition: var(--transicao-base);
+}
+
+.botao:hover {
+  opacity: 0.9;
+  transform: translateY(-2px); /* Efeito sutil de elevação */
+  box-shadow: var(--sombra-caixa);
+}
+
+/* 2. Botão Secundário (Estilo "vazado" ou "outline") */
+.botao-secundario {
+  background-color: transparent;
+  border-color: var(--cor-secundaria);
+  color: var(--cor-secundaria);
+}
+
+.botao-secundario:hover {
+  background-color: var(--cor-secundaria);
+  color: var(--cor-texto-invertido);
+  opacity: 1; /* Reset da opacidade para este efeito específico */
+}
+
+/* 3. Botão de Importar (Verde, cor de sucesso) */
+.botao-importar {
+  background-color: var(--cor-sucesso);
+  color: var(--cor-texto-invertido);
+  border-color: var(--cor-sucesso);
+}
+
+/* 4. Botão de Exportar (Cinza, cor secundária) */
+.botao-exportar {
+  background-color: var(--cor-secundaria);
+  color: var(--cor-texto-invertido);
+  border-color: var(--cor-secundaria);
+}
+
+/* ==========================================================================
+   ESTILOS DA SIDEBAR
+   ========================================================================== */
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 260px;
+    background-color: var(--cor-sidebar-fundo);
+    border-right: 1px solid var(--cor-borda);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    
+    /* ✅ ADICIONE ESTAS 3 LINHAS */
+    position: sticky; /* "Cola" a sidebar na tela */
+    top: 0;           /* Alinha com o topo */
+    height: 100vh;    /* Define a altura como 100% da altura da tela (viewport-height) */
+}
+
+.sidebar-header {
+    padding: 1.25rem; /* Um pouco menos de padding vertical */
+}
+
+.logo-container {
+    display: flex;
+    align-items: center; /* Alinha a logo e o texto verticalmente */
+    gap: 0.75rem;      /* Espaço entre a logo e o texto */
+    text-decoration: none;
+}
+
+.logo-image {
+    width: 100%;  /* Define a largura da logo */
+    height: 85px;
+}
+
+/* Garante que o texto fique alinhado à esquerda no novo layout */
+.logo-container .logo-text,
+.logo-container .logo-subtext {
+    text-align: left;
+}
+
+.logo-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--cor-texto-invertido); /* ALTERADO */
+}
+
+.logo-subtext {
+    font-size: 0.875rem;
+    color: var(--cor-primaria);
+}
+
+.sidebar-nav {
+    flex-grow: 1;
+    padding: 1rem 0;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1.5rem;
+    margin: 0.25rem 1rem;
+    border-radius: var(--raio-borda);
+    text-decoration: none;
+    color: var(--cor-sidebar-texto); /* ALTERADO */
+    font-weight: 500;
+    transition: var(--transicao-base);
+}
+
+.nav-link:hover {
+    background-color: var(--cor-sidebar-hover); /* ALTERADO */
+    color: var(--cor-texto-invertido); /* ALTERADO */
+}
+
+/* Estilo do link ATIVO */
+.nav-link.active {
+    background-color: var(--cor-primaria); /* ALTERADO */
+    color: var(--cor-texto-invertido);
+    box-shadow: var(--sombra-caixa);
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    background-color: var(--cor-fundo);
+    overflow-y: auto;
+}
+
+.sidebar-stats {
+    padding: 0 1.5rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--cor-sidebar-hover);
+    padding-top: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.stat-card {
+    background-color: var(--cor-sidebar-hover);
+    padding: 0.75rem;
+    border-radius: var(--raio-borda);
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cor-texto-invertido);
+    display: block;
+}
+.stat-value.green { color: #48BB78; }
+.stat-value.red { color: #F56565; }
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--cor-sidebar-texto);
+    display: block;
+}
+
+.sidebar-copyright {
+    font-size: 0.75rem;
+    color: var(--cor-texto-secundario);
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Ajuste no footer do usuário para empurrá-lo para baixo */
+.sidebar-nav {
+    flex-grow: 1; 
+}
+
+.nav-link i {
+    width: 20px; /* Garante que os ícones tenham uma largura fixa */
+    margin-right: 1rem; /* Espaço entre o ícone e o texto */
+    text-align: center;
+}
+
+.has-submenu .submenu {
+    display: none;
+    list-style: none;
+    margin-top: 0.5rem;
+    padding-left: 0;
+    
+    /* Prepara o espaço para a linha vertical */
+    position: relative;
+    margin-left: 2.75rem; /* Alinha o submenu com o texto do item pai */
+}
+
+/* A LINHA VERTICAL DECORATIVA */
+.has-submenu .submenu::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -1rem; /* Posição da linha */
+    height: 100%;
+    width: 1px;
+    background-color: var(--cor-sidebar-hover);
+}
+
+.has-submenu.open .submenu {
+    display: block;
+}
+
+.submenu li {
+    position: relative; /* Necessário para o tracinho horizontal */
+}
+
+.submenu a {
+    display: block;
+    padding: 0.5rem 0; /* Ajuste no padding */
+    font-size: 0.9rem;
+    color: var(--cor-sidebar-texto); /* Usa a cor padrão do texto da sidebar */
+    text-decoration: none;
+    border-radius: var(--raio-borda);
+    transition: var(--transicao-base);
+    position: relative;
+}
+
+/* O TRACINHO HORIZONTAL DE CADA ITEM */
+.submenu a::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -1rem; /* Alinha com a linha vertical */
+    height: 1px;
+    width: 8px; /* Largura do traço */
+    background-color: var(--cor-sidebar-hover);
+    transform: translateY(-50%);
+}
+
+.submenu a:hover,
+.submenu a.active {
+    color: var(--cor-texto-invertido); /* Destaca o texto ao passar o mouse ou se estiver ativo */
+}
+
+/* Remove o espaçamento padrão do ícone se houver (ajuste conforme necessário) */
+.nav-link i {
+    margin-right: 10px;
+}
+
+/* Posiciona o texto para ocupar o espaço disponível, empurrando a seta para a direita */
+.nav-link span:not(.arrow) {
+    flex-grow: 1;
+}
+
+/* Estilização da seta (fechada) */
+.nav-link .arrow {
+    width: 0; 
+    height: 0; 
+    /* Cria um triângulo usando bordas */
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid var(--cor-sidebar-texto); /* Cor da seta */
+}
+
+/* Estilo do submenu (escondido por padrão) */
+.submenu {
+    display: none;
+    list-style: none;
+    padding-left: 25px; /* Indentação para os links do submenu */
+}
+
+/* QUANDO O MENU ESTIVER ABERTO */
+
+/* Rotaciona a seta 90 graus quando o item pai tiver a classe 'open' */
+.nav-item.open > .nav-link .arrow {
+    transform: rotate(90deg);
+}
+
+/* Mostra o submenu quando o item pai tiver a classe 'open' */
+.nav-item.open .submenu {
+    display: block;
+}
+
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.5); 
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal .form-group {
+    margin-bottom: 15px;
+}
+
+.modal .form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.modal .form-group input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+/* ==========================================================================
+   ESTILOS DE FORMULÁRIO
+   ========================================================================== */
+
+.form-group {
+    margin-bottom: 1rem; /* Espaçamento entre grupos de formulário */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--cor-texto-principal);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-borda);
+    font-family: var(--fonte-principal);
+    font-size: 1rem;
+    color: var(--cor-texto-principal);
+    background-color: var(--cor-superficie);
+    transition: var(--transicao-base);
+    box-sizing: border-box; /* Garante que padding e borda não aumentem a largura total */
+}
+
+.form-control:focus {
+    border-color: var(--cor-primaria);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--cor-primaria-rgb), 0.2); /* Exemplo de sombra de foco */
+}
+
+/* Estilos para mensagens de feedback */
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: var(--raio-borda);
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: #D4EDDA;
+    color: #155724;
+    border: 1px solid #C3E6CB;
+}
+
+.alert-error {
+    background-color: #F8D7DA;
+    color: #721C24;
+    border: 1px solid #F5C6CB;
+}
+
+
+/* ==========================================================================
+   ESTILOS DO FOOTER DA SIDEBAR
+   ========================================================================== */
+
+.sidebar-footer {
+    padding: 1rem;
+    margin-top: auto; /* Empurra o footer para o final */
+}
+
+.sidebar-footer .user-info {
+padding: 5px 0 0.5rem; /* Reduzido padding superior (para 5px) */
+text-align: left;
+}
+
+.sidebar-footer .user-name {
+    display: block;
+    font-weight: 600;
+    color: var(--cor-texto-invertido);
+}
+
+.sidebar-footer .user-role {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--cor-sidebar-texto);
+}
+
+.sidebar-footer .logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.75rem;
+    border-radius: var(--raio-borda);
+    background-color: var(--cor-sidebar-hover);
+    color: var(--cor-texto-invertido);
+    text-decoration: none;
+    transition: var(--transicao-base);
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.sidebar-footer .logout-button:hover {
+    background-color: var(--cor-primaria);
+}
+
+.sidebar-footer .logout-button i {
+    margin-right: 0.75rem;
+}
+
+.botao-sucesso {
+    background-color: #10B981; /* Verde (similar ao da imagem) */
+    color: white;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.375rem; /* 6px */
+    font-weight: 600;
+    font-size: 0.875rem; /* 14px */
+    transition: background-color 0.2s ease-in-out;
+}
+
+.botao-sucesso:hover {
+    background-color: #059669; /* Verde mais escuro no hover */
+}
+
+/* --- Estilos do Interruptor de Tema (Sidebar) --- */
+.theme-switcher {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px 5px; /* Reduzido padding inferior (era 8px) */
+    border-top: 1px solid var(--cor-sidebar-hover);
+    gap: 10px;
+}
+
+.theme-label {
+    color: var(--cor-sidebar-texto);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap; /* Impede a quebra de linha */
+}
+
+/* Estilos para o Toggle Switch */
+.switch { 
+    position: relative; 
+    display: inline-block; 
+    width: 52px;   /* Tamanho médio */
+    height: 28px;  /* Tamanho médio */
+    flex-shrink: 0; 
+}
+
+.switch input { 
+    opacity: 0; 
+    width: 0; 
+    height: 0; 
+}
+
+.slider { 
+    position: absolute; 
+    cursor: pointer; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    background-color: #ccc; 
+    transition: .4s; 
+    border-radius: 34px; 
+}
+
+.slider:before {
+    position: absolute;
+    content: "\f185"; 
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    height: 24px; /* Tamanho médio */
+    width: 24px;  /* Tamanho médio */
+    left: 2px;
+    bottom: 2px;
+    font-size: 16px; /* Tamanho médio do ícone */
+    background-color: white; 
+    transition: .4s;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #f39c12;
+}
+
+input:checked + .slider {
+    background-color: #8b5cf6; /* Roxo */
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #8b5cf6;
+}
+
+input:checked + .slider:before {
+    content: "\f186"; 
+    color: #8b5cf6; 
+    transform: translateX(24px); /* <-- CORRIGIDO (2px a menos) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 16px; 
+}
+
+/* ==================================================================
+   ESTILOS DO MODO ESCURO
+   ================================================================== */
+
+html.dark .main-content {
+background-color: var(--cor-sidebar-fundo); /* #1A202C */
+}
+
+/* Títulos e Textos Principais */
+html.dark .text-gray-800 {
+color: #E2E8F0; /* Cinza claro */
+}
+html.dark .text-gray-700 {
+color: #A0AEC0; /* Cinza médio */
+}
+html.dark .text-gray-600 {
+color: #718096; /* Cinza escuro */
+}
+
+/* Cards Brancos (como filtro, gráficos e tabela) */
+html.dark .bg-white {
+ background-color: #2D3748; /* Cinza escuro (hover da sidebar) */
+}
+
+/* Card de KPI */
+html.dark .kpi-card {
+background-color: #2D3748; 
+}
+
+html.dark .kpi-text .kpi-title {
+ color: var(--cor-texto-secundario);
+}
+
+html.dark .kpi-text .kpi-value {
+ color: var(--cor-texto-invertido); /* Branco */
+}
+
+/* Tabela de Processos Recentes */
+html.dark .uppercase.bg-gray-50 {
+    background-color: #4A5568; /* Cinza mais escuro */
+    color: #E2E8F0;
+}
+
+html.dark .border-b {
+    border-color: #4A5568;
+}
