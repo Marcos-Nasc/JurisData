@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* ✅ PASSO 1: Define o tamanho base de tudo como 80% */
+html {
+    font-size: 80%;
+}
+
 /* ==========================================================================
    DEFINIÇÕES GLOBAIS DE DESIGN (IDENTIDADE VISUAL)
    ========================================================================== */
@@ -7,7 +12,7 @@
 :root {
   /* ... (suas cores primária, secundária, etc. continuam aqui) ... */
   --cor-primaria: #005A9C;
-  --cor-secundaria: #4A5568;
+  --cor-secundaria: #A0AEC0;
   --cor-fundo: #F8F9FA;
   --cor-superficie: #FFFFFF;
   --cor-texto-principal: #1A202C;
@@ -33,7 +38,7 @@
   background-color: var(--cor-primaria);
   color: var(--cor-texto-invertido);
   font-family: var(--fonte-principal);
-  font-size: var(--tamanho-base);
+  font-size: 1rem; /* ✅ CORRIGIDO (Revertido) */
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: var(--raio-borda);
@@ -53,15 +58,15 @@
 
 /* 1. Classe Base (Estilo comum a TODOS os botões) */
 .botao {
-  display: inline-flex;         /* Para alinhar texto e ícones facilmente */
+  display: inline-flex;         
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;                  /* Espaço entre o ícone e o texto */
+  gap: 0.5rem;                  
   
   font-family: var(--fonte-principal);
-  font-size: var(--tamanho-pequeno);
-  font-weight: 600;             /* Semi-bold para dar destaque */
-  text-decoration: none;        /* Remove sublinhado se usar a classe em um link <a> */
+  font-size: 0.875rem; /* ✅ CORRIGIDO (Revertido) */
+  font-weight: 600;             
+  text-decoration: none;        
   
   padding: 0.6rem 1.2rem;
   border: 1px solid transparent;
@@ -73,7 +78,7 @@
 
 .botao:hover {
   opacity: 0.9;
-  transform: translateY(-2px); /* Efeito sutil de elevação */
+  transform: translateY(-2px); 
   box-shadow: var(--sombra-caixa);
 }
 
@@ -87,7 +92,7 @@
 .botao-secundario:hover {
   background-color: var(--cor-secundaria);
   color: var(--cor-texto-invertido);
-  opacity: 1; /* Reset da opacidade para este efeito específico */
+  opacity: 1; 
 }
 
 /* 3. Botão de Importar (Verde, cor de sucesso) */
@@ -114,49 +119,47 @@
 }
 
 .sidebar {
-    width: 260px;
+    width: 18rem; /* ✅ ALTERADO (16.25rem -> 18rem) */
     background-color: var(--cor-sidebar-fundo);
-    border-right: 1px solid var(--cor-borda);
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
     
-    /* ✅ ADICIONE ESTAS 3 LINHAS */
-    position: sticky; /* "Cola" a sidebar na tela */
-    top: 0;           /* Alinha com o topo */
-    height: 100vh;    /* Define a altura como 100% da altura da tela (viewport-height) */
+    position: sticky; 
+    top: 0;           
+    height: 100vh;    
 }
 
 .sidebar-header {
-    padding: 1.25rem; /* Um pouco menos de padding vertical */
+    padding: 1.25rem; 
 }
 
 .logo-container {
     display: flex;
-    align-items: center; /* Alinha a logo e o texto verticalmente */
-    gap: 0.75rem;      /* Espaço entre a logo e o texto */
+    align-items: center;
     text-decoration: none;
+    /* ✅ Adicionado para alinhamento */
+    min-height: 5.3125rem; 
 }
 
 .logo-image {
-    width: 100%;  /* Define a largura da logo */
-    height: 85px;
+    width: 100%;  
+    height: 5.3125rem; /* 85px -> 5.3125rem */
 }
 
-/* Garante que o texto fique alinhado à esquerda no novo layout */
 .logo-container .logo-text,
 .logo-container .logo-subtext {
     text-align: left;
 }
 
 .logo-text {
-    font-size: 1.25rem;
+    font-size: 1.25rem; /* ✅ CORRIGIDO (Revertido) */
     font-weight: 700;
-    color: var(--cor-texto-invertido); /* ALTERADO */
+    color: var(--cor-texto-invertido); 
 }
 
 .logo-subtext {
-    font-size: 0.875rem;
+    font-size: 0.875rem; /* ✅ CORRIGIDO (Revertido) */
     color: var(--cor-primaria);
 }
 
@@ -178,19 +181,20 @@
     margin: 0.25rem 1rem;
     border-radius: var(--raio-borda);
     text-decoration: none;
-    color: var(--cor-sidebar-texto); /* ALTERADO */
+    color: var(--cor-sidebar-texto); 
     font-weight: 500;
+    font-size: 1rem; /* ✅ CORRIGIDO (Revertido) */
     transition: var(--transicao-base);
 }
 
 .nav-link:hover {
-    background-color: var(--cor-sidebar-hover); /* ALTERADO */
-    color: var(--cor-texto-invertido); /* ALTERADO */
+    background-color: var(--cor-sidebar-hover); 
+    color: var(--cor-texto-invertido); 
 }
 
 /* Estilo do link ATIVO */
 .nav-link.active {
-    background-color: var(--cor-primaria); /* ALTERADO */
+    background-color: var(--cor-primaria); 
     color: var(--cor-texto-invertido);
     box-shadow: var(--sombra-caixa);
 }
@@ -220,7 +224,7 @@
 }
 
 .stat-value {
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* ✅ CORRIGIDO (Revertido) */
     font-weight: 700;
     color: var(--cor-texto-invertido);
     display: block;
@@ -229,26 +233,25 @@
 .stat-value.red { color: #F56565; }
 
 .stat-label {
-    font-size: 0.75rem;
+    font-size: 0.75rem; /* ✅ CORRIGIDO (Revertido) */
     color: var(--cor-sidebar-texto);
     display: block;
 }
 
 .sidebar-copyright {
-    font-size: 0.75rem;
+    font-size: 0.75rem; /* ✅ CORRIGIDO (Revertido) */
     color: var(--cor-texto-secundario);
     text-align: center;
     padding: 1rem;
 }
 
-/* Ajuste no footer do usuário para empurrá-lo para baixo */
 .sidebar-nav {
     flex-grow: 1; 
 }
 
 .nav-link i {
-    width: 20px; /* Garante que os ícones tenham uma largura fixa */
-    margin-right: 1rem; /* Espaço entre o ícone e o texto */
+    width: 1.25rem; /* 20px -> 1.25rem */
+    margin-right: 0.625rem; /* 10px -> 0.625rem */
     text-align: center;
 }
 
@@ -258,19 +261,17 @@
     margin-top: 0.5rem;
     padding-left: 0;
     
-    /* Prepara o espaço para a linha vertical */
     position: relative;
-    margin-left: 2.75rem; /* Alinha o submenu com o texto do item pai */
+    margin-left: 2.75rem; 
 }
 
-/* A LINHA VERTICAL DECORATIVA */
 .has-submenu .submenu::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -1rem; /* Posição da linha */
+    left: -1rem; 
     height: 100%;
-    width: 1px;
+    width: 1px; 
     background-color: var(--cor-sidebar-hover);
 }
 
@@ -279,72 +280,58 @@
 }
 
 .submenu li {
-    position: relative; /* Necessário para o tracinho horizontal */
+    position: relative; 
 }
 
 .submenu a {
     display: block;
-    padding: 0.5rem 0; /* Ajuste no padding */
-    font-size: 0.9rem;
-    color: var(--cor-sidebar-texto); /* Usa a cor padrão do texto da sidebar */
+    padding: 0.5rem 0; 
+    font-size: 0.9rem; /* ✅ CORRIGIDO (Revertido) */
+    color: var(--cor-sidebar-texto); 
     text-decoration: none;
     border-radius: var(--raio-borda);
     transition: var(--transicao-base);
     position: relative;
 }
 
-/* O TRACINHO HORIZONTAL DE CADA ITEM */
 .submenu a::before {
     content: '';
     position: absolute;
     top: 50%;
-    left: -1rem; /* Alinha com a linha vertical */
-    height: 1px;
-    width: 8px; /* Largura do traço */
+    left: -1rem; 
+    height: 1px; 
+    width: 0.5rem; /* 8px -> 0.5rem */
     background-color: var(--cor-sidebar-hover);
     transform: translateY(-50%);
 }
 
 .submenu a:hover,
 .submenu a.active {
-    color: var(--cor-texto-invertido); /* Destaca o texto ao passar o mouse ou se estiver ativo */
+    color: var(--cor-texto-invertido); 
 }
 
-/* Remove o espaçamento padrão do ícone se houver (ajuste conforme necessário) */
-.nav-link i {
-    margin-right: 10px;
-}
-
-/* Posiciona o texto para ocupar o espaço disponível, empurrando a seta para a direita */
 .nav-link span:not(.arrow) {
     flex-grow: 1;
 }
 
-/* Estilização da seta (fechada) */
 .nav-link .arrow {
     width: 0; 
     height: 0; 
-    /* Cria um triângulo usando bordas */
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 5px solid var(--cor-sidebar-texto); /* Cor da seta */
+    border-top: 0.3125rem solid transparent; /* 5px -> 0.3125rem */
+    border-bottom: 0.3125rem solid transparent; /* 5px -> 0.3125rem */
+    border-left: 0.3125rem solid var(--cor-sidebar-texto); /* 5px -> 0.3125rem */
 }
 
-/* Estilo do submenu (escondido por padrão) */
 .submenu {
     display: none;
     list-style: none;
-    padding-left: 25px; /* Indentação para os links do submenu */
+    padding-left: 1.5625rem; /* 25px -> 1.5625rem */
 }
 
-/* QUANDO O MENU ESTIVER ABERTO */
-
-/* Rotaciona a seta 90 graus quando o item pai tiver a classe 'open' */
 .nav-item.open > .nav-link .arrow {
     transform: rotate(90deg);
 }
 
-/* Mostra o submenu quando o item pai tiver a classe 'open' */
 .nav-item.open .submenu {
     display: block;
 }
@@ -364,10 +351,10 @@
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto; 
-    padding: 20px;
+    padding: 1.25rem; /* 20px -> 1.25rem */
     border: 1px solid #888;
     width: 80%;
-    max-width: 500px;
+    max-width: 31.25rem; /* 500px -> 31.25rem */
     border-radius: 8px;
     position: relative;
 }
@@ -375,11 +362,11 @@
 .close-button {
     color: #aaa;
     float: right;
-    font-size: 28px;
+    font-size: 1.75rem; /* ✅ CORRIGIDO (Revertido) */
     font-weight: bold;
     position: absolute;
-    top: 10px;
-    right: 20px;
+    top: 0.625rem; /* 10px -> 0.625rem */
+    right: 1.25rem; /* 20px -> 1.25rem */
 }
 
 .close-button:hover,
@@ -400,7 +387,7 @@
 
 .modal .form-group input {
     width: 100%;
-    padding: 8px;
+    padding: 0.5rem; /* 8px -> 0.5rem */
     box-sizing: border-box;
 }
 
@@ -409,7 +396,7 @@
    ========================================================================== */
 
 .form-group {
-    margin-bottom: 1rem; /* Espaçamento entre grupos de formulário */
+    margin-bottom: 1rem; 
 }
 
 .form-group label {
@@ -425,17 +412,17 @@
     border: 1px solid var(--cor-borda);
     border-radius: var(--raio-borda);
     font-family: var(--fonte-principal);
-    font-size: 1rem;
+    font-size: 1rem; /* ✅ CORRIGIDO (Revertido) */
     color: var(--cor-texto-principal);
     background-color: var(--cor-superficie);
     transition: var(--transicao-base);
-    box-sizing: border-box; /* Garante que padding e borda não aumentem a largura total */
+    box-sizing: border-box; 
 }
 
 .form-control:focus {
     border-color: var(--cor-primaria);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(var(--cor-primaria-rgb), 0.2); /* Exemplo de sombra de foco */
+    box-shadow: 0 0 0 0.1875rem rgba(var(--cor-primaria-rgb), 0.2); /* 3px -> 0.1875rem */
 }
 
 /* Estilos para mensagens de feedback */
@@ -465,11 +452,11 @@
 
 .sidebar-footer {
     padding: 1rem;
-    margin-top: auto; /* Empurra o footer para o final */
+    margin-top: auto; 
 }
 
 .sidebar-footer .user-info {
-padding: 5px 0 0.5rem; /* Reduzido padding superior (para 5px) */
+padding: 0.3125rem 0 0.5rem; /* 5px -> 0.3125rem */
 text-align: left;
 }
 
@@ -477,11 +464,12 @@ text-align: left;
     display: block;
     font-weight: 600;
     color: var(--cor-texto-invertido);
+    font-size: 1rem; /* ✅ CORRIGIDO (Revertido) */
 }
 
 .sidebar-footer .user-role {
     display: block;
-    font-size: 0.875rem;
+    font-size: 0.875rem; /* ✅ CORRIGIDO (Revertido) */
     color: var(--cor-sidebar-texto);
 }
 
@@ -508,42 +496,44 @@ text-align: left;
 }
 
 .botao-sucesso {
-    background-color: #10B981; /* Verde (similar ao da imagem) */
+    background-color: #10B981; 
     color: white;
     padding: 0.625rem 1.25rem;
     border-radius: 0.375rem; /* 6px */
     font-weight: 600;
-    font-size: 0.875rem; /* 14px */
+    font-size: 0.875rem; /* ✅ CORRIGIDO (Revertido) */
     transition: background-color 0.2s ease-in-out;
 }
 
 .botao-sucesso:hover {
-    background-color: #059669; /* Verde mais escuro no hover */
+    background-color: #059669; 
 }
 
+/* --- Estilos do Interruptor de Tema (Sidebar) --- */
 /* --- Estilos do Interruptor de Tema (Sidebar) --- */
 .theme-switcher {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px 5px; /* Reduzido padding inferior (era 8px) */
+    /* ✅ CORREÇÃO (BUG 1): Padding vertical igual (10px) */
+    padding: 10px 20px;
     border-top: 1px solid var(--cor-sidebar-hover);
-    gap: 10px;
+    /* gap: 10px; */ /* Removido para centralizar corretamente */
 }
 
 .theme-label {
     color: var(--cor-sidebar-texto);
     font-size: 0.9rem;
     font-weight: 500;
-    white-space: nowrap; /* Impede a quebra de linha */
+    white-space: nowrap;
 }
 
 /* Estilos para o Toggle Switch */
 .switch { 
     position: relative; 
     display: inline-block; 
-    width: 52px;   /* Tamanho médio */
-    height: 28px;  /* Tamanho médio */
+    width: 44px;   /* Mantido */
+    height: 24px;  /* Mantido */
     flex-shrink: 0; 
 }
 
@@ -570,11 +560,11 @@ text-align: left;
     content: "\f185"; 
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    height: 24px; /* Tamanho médio */
-    width: 24px;  /* Tamanho médio */
-    left: 2px;
-    bottom: 2px;
-    font-size: 16px; /* Tamanho médio do ícone */
+    height: 18px; /* ✅ DIMINUÍDO (era 20px) para criar 'padding' */
+    width: 18px;  /* ✅ DIMINUÍDO (era 20px) para criar 'padding' */
+    left: 3px;    /* ✅ AUMENTADO (era 2px) para 'padding' */
+    bottom: 3px;  /* ✅ AUMENTADO (era 2px) para 'padding' */
+    font-size: 12px; /* ✅ DIMINUÍDO (era 14px) para caber no círculo menor */
     background-color: white; 
     transition: .4s;
     border-radius: 50%;
@@ -594,11 +584,11 @@ input:focus + .slider {
 
 input:checked + .slider:before {
     content: "\f186"; 
-    color: #8b5cf6; 
-    transform: translateX(24px); /* <-- CORRIGIDO (2px a menos) */
+    color: #8b5cf6; /* ✅ CORRIGIDO de volta para o Roxo! */
+    transform: translateX(20px); 
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    font-size: 16px; 
+    font-size: 12px; 
 }
 
 /* ==================================================================
@@ -631,7 +621,8 @@ background-color: #2D3748;
 }
 
 html.dark .kpi-text .kpi-title {
- color: var(--cor-texto-secundario);
+ color: #A0AEC0;
+ font-weight: bold;
 }
 
 html.dark .kpi-text .kpi-value {
@@ -646,4 +637,452 @@ html.dark .uppercase.bg-gray-50 {
 
 html.dark .border-b {
     border-color: #4A5568;
+}
+/* ==========================================================================
+   ✅ CORREÇÃO: ESTILO BASE DO BOTÃO SAIR
+   ========================================================================== */
+
+.sidebar-footer .logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.75rem;
+    border-radius: var(--raio-borda);
+    background-color: var(--cor-sidebar-hover);
+    color: var(--cor-texto-invertido);
+    text-decoration: none;
+    transition: var(--transicao-base);
+    width: 100%;
+}
+.sidebar-footer .logout-button span {
+    display: inline; /* ✅ CORRIGIDO: Texto visível por padrão */
+    margin-left: 0.75rem;
+}
+.sidebar-footer .logout-button i {
+    margin-right: 0;
+    width: 1.25rem;
+    text-align: center;
+}
+.sidebar-footer .logout-button:hover {
+    background-color: var(--cor-primaria);
+}
+
+
+/* ==========================================================================
+   ✅ NOVOS ESTILOS: SIDEBAR COLAPSÁVEL (TABLET/DESKTOP)
+   ========================================================================== */
+
+/* --- Transições Suaves --- */
+.sidebar, .main-content {
+    transition: all 0.3s ease-in-out;
+}
+.sidebar * {
+    transition: all 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+/* --- ✅ NOVO: Estilos do Logo (Ícone vs Imagem) --- */
+.logo-container {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+.logo-icon {
+    display: none; /* Escondido por padrão */
+    padding: 1rem; /* Padding para centralizar */
+    line-height: 1;
+}
+.logo-icone {
+    width: 2.5rem;  /* 40px */
+    height: 2.5rem; /* 40px */
+}
+.logo-image {
+    display: block; /* Visível por padrão */
+    width: 100%; 
+    height: 5.3125rem;
+}
+
+/* --- Botão de "Pin" (Toggle) --- */
+.sidebar-toggle-btn {
+    display: none; /* Escondido por padrão */
+    position: absolute;
+    top: 1.9rem;
+    left: 17rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--cor-sidebar-fundo);
+    border: 3px solid var(--cor-fundo);
+    color: var(--cor-sidebar-texto);
+    cursor: pointer;
+    z-index: 20;
+    transition: transform 0.3s ease, right 0.3s ease, background-color 0.3s, color 0.3s;
+}
+html.dark .sidebar-toggle-btn {
+    border-color: #1A202C; /* Fundo do main-content escuro */
+}
+.sidebar-toggle-btn:hover {
+    color: var(--cor-texto-invertido);
+    background-color: var(--cor-primaria);
+}
+.sidebar-toggle-btn i {
+transition: transform 0.3s ease;
+margin: 0;         /* Remove qualquer margem do ícone */
+    padding: 0;        /* Remove qualquer padding do ícone */
+    line-height: 1;    /* Força a altura da linha a ser 1 */
+    font-size: 0.9rem; /* Leve ajuste no tamanho da seta */
+}
+
+.sidebar-toggle-btn i::before {
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* --- Novo Footer de Perfil com Avatar --- */
+/* --- Estilos do Interruptor de Tema (Sidebar) --- */
+.theme-switcher {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* ✅ CORREÇÃO (BUG 1): Padding vertical igual (10px) */
+    padding: 10px 20px;
+    border-top: 1px solid var(--cor-sidebar-hover);
+    /* gap: 10px; */ /* Removido para centralizar corretamente */
+}
+
+/* ==================================================================
+   ✅ CORREÇÃO (UI/UX): Novo Footer do Usuário
+   ================================================================== */
+
+/* Bloco 2: O Perfil (Avatar + Nome) */
+.user-profile-footer {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem; /* 12px 16px */
+    border-top: 1px solid var(--cor-sidebar-hover);
+}
+
+.user-avatar {
+    display: flex; /* Sempre visível */
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;   /* 40px */
+    height: 2.5rem;  /* 40px */
+    border-radius: 50%;
+    background-color: var(--cor-primaria); /* Padrão, se a cor PHP não for usada */
+    color: var(--cor-texto-invertido);
+    font-weight: 600;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.user-avatar span {
+    line-height: 1; /* Alinhamento vertical */
+}
+
+.user-info {
+    display: block; /* Sempre visível */
+    flex-grow: 1;
+    margin-left: 0.75rem;
+}
+.user-info .user-name {
+    font-weight: 600;
+    color: var(--cor-texto-invertido);
+    font-size: 1rem;
+}
+.user-info .user-role {
+    font-size: 0.875rem;
+    color: var(--cor-sidebar-texto);
+}
+
+
+/* Bloco 3: O Botão Sair (Agora separado) */
+.logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.625rem;
+    padding: 0.75rem 1.5rem; /* Mais padding, como um item de menu */
+    margin: 0.5rem 1rem; /* Espaçamento */
+    border-radius: var(--raio-borda);
+    background-color: var(--cor-sidebar-hover);
+    color: var(--cor-sidebar-texto);
+    text-decoration: none;
+    transition: var(--transicao-base);
+    width: calc(100% - 2rem); /* Largura total menos as margens */
+    box-sizing: border-box;
+    padding: 0.75rem 1.5rem;
+}
+.logout-button:hover {
+    background-color: var(--cor-primaria);
+    color: var(--cor-texto-invertido);
+}
+.logout-button i {
+width: 1.25rem;
+
+text-align: center;
+line-height: 1; /* ✅ ADICIONADO: Força o alinhamento do ícone */
+}
+.logout-button span {
+line-height: 1; /* ✅ ADICIONADO: Garante que o texto e o ícone tenham a mesma base */
+}
+
+
+/* --- ESTADO COLAPSADO (Como o novo footer se comporta) --- */
+@media (min-width: 768px) {
+    
+    /* Mostra o botão "Pin" no tablet/desktop */
+    .sidebar-toggle-btn {
+        display: block;
+    }
+
+    /* --- LAYOUT GERAL COLAPSADO --- */
+    .app-layout.sidebar-collapsed .sidebar {
+        width: 5.5rem; /* Largura colapsada */
+    }
+    
+    /* Gira o botão "Pin" */
+    .app-layout.sidebar-collapsed .sidebar-toggle-btn {
+       top: 1.4rem; /* Ajuste fino visual para alinhar com o ícone */
+        left: 4.25rem;
+    }
+    .app-layout.sidebar-collapsed .sidebar-toggle-btn i {
+transform: rotate(180deg); 
+    }
+    
+    /* --- ✅ REGRAS QUE FALTAVAM (LOGO) --- */
+    .app-layout.sidebar-collapsed .sidebar {
+        overflow: hidden; 
+    }
+    .app-layout.sidebar-collapsed .logo-container {
+        justify-content: center;
+        padding: 0.35rem 0;
+    }
+    .app-layout.sidebar-collapsed .logo-image {
+        display: none; /* Esconde logo completa */
+    }
+    .app-layout.sidebar-collapsed .logo-icon {
+        display: block; /* Mostra logo ícone */
+        padding: 1rem 0;
+    }
+
+    /* --- ✅ REGRAS QUE FALTAVAM (LINKS) --- */
+    .app-layout.sidebar-collapsed .nav-link {
+        justify-content: center;
+        padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+    .app-layout.sidebar-collapsed .nav-link span,
+    .app-layout.sidebar-collapsed .nav-link .arrow {
+        display: none; /* Esconde o texto e a seta */
+    }
+    .app-layout.sidebar-collapsed .nav-link i {
+        margin-right: 0;
+        font-size: 1.25rem; /* Ícone fica um pouco maior */
+        width: 1.25rem;
+        text-align: center;
+    }
+    .app-layout.sidebar-collapsed .submenu {
+        display: none !important; /* Força o fechamento de submenus */
+    }
+
+    /* --- FOOTER COLAPSADO (Já estava correto) --- */
+    .app-layout.sidebar-collapsed .theme-label {
+        display: none;
+    }
+    .app-layout.sidebar-collapsed .theme-switcher {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    /* ... (resto das regras do footer .user-profile-footer, .user-avatar, etc.) ... */
+    .app-layout.sidebar-collapsed .user-profile-footer {
+        flex-direction: column;
+        padding: 0.75rem;
+    }
+    .app-layout.sidebar-collapsed .user-avatar {
+        margin: 0; 
+    }
+    .app-layout.sidebar-collapsed .user-info {
+        display: none; 
+    }
+    .app-layout.sidebar-collapsed .logout-button {
+        width: 2.5rem; 
+        height: 2.5rem;
+        justify-content: center;
+        margin: 0.5rem auto; 
+        padding: 0;
+    }
+    .app-layout.sidebar-collapsed .logout-button span {
+        display: none; 
+    }
+    .app-layout.sidebar-collapsed .logout-button i {
+        margin: 0; 
+    }
+
+    /* --- HOVER NO COLAPSADO (Já estava correto) --- */
+    /* ... (regras de .app-layout.sidebar-collapsed .sidebar:hover) ... */
+     .app-layout.sidebar-collapsed .sidebar:hover {
+        width: 18rem; /* Expande para a largura original */
+        position: fixed; 
+        z-index: 100;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+    
+    /* Traz de volta todos os itens escondidos */
+    .app-layout.sidebar-collapsed .sidebar:hover .logo-container {
+        justify-content: flex-start;
+        padding: 0; /* Volta ao normal */
+    }
+    .app-layout.sidebar-collapsed .sidebar:hover .logo-image {
+        display: block;
+    }
+    .app-layout.sidebar-collapsed .sidebar:hover .logo-icon {
+        display: none;
+    }
+
+    .app-layout.sidebar-collapsed .sidebar:hover .nav-link {
+        justify-content: flex-start;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    .app-layout.sidebar-collapsed .sidebar:hover .nav-link span,
+    .app-layout.sidebar-collapsed .sidebar:hover .nav-link .arrow {
+        display: block;
+    }
+    .app-layout.sidebar-collapsed .sidebar:hover .nav-link i {
+        margin-right: 0.625rem;
+        font-size: 1rem;
+    }
+    
+    .app-layout.sidebar-collapsed .sidebar:hover .theme-label {
+        display: block;
+    }
+    .app-layout.sidebar-collapsed .sidebar:hover .theme-switcher {
+        justify-content: space-between;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .app-layout.sidebar-collapsed .sidebar:hover .user-profile-footer {
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+        padding: 0.75rem 1rem;
+    }
+    .app-layout.sidebar-collapsed .sidebar:hover .user-info {
+        display: block; /* Mostra o nome/cargo */
+    }
+    .app-layout.sidebar-collapsed .sidebar:hover .logout-button {
+        width: auto;
+        height: auto;
+        padding: 0.75rem;
+        margin-left: 0.5rem;
+    }
+    .app-layout.sidebar-collapsed .sidebar:hover .logout-button span {
+        display: inline; /* Mostra "Sair" */
+    }
+    .app-layout.sidebar-collapsed .sidebar:hover .logout-button i {
+        margin-right: 0.75rem;
+    }
+    
+    .app-layout.sidebar-collapsed .sidebar:hover .sidebar-toggle-btn {
+        display: none;
+    }
+}
+
+
+/* ==========================================================================
+   ✅ LAYOUT MOBILE (CELULAR) - LÓGICA CORRIGIDA
+   ========================================================================== */
+
+@media (max-width: 767.98px) {
+    /* O botão de toggle vira "hamburger" e vai para o header */
+    .sidebar-toggle-btn {
+        display: block;
+        position: static;
+        width: 2.5rem;
+        height: 2.5rem;
+        border: none;
+        background: none;
+        color: var(--cor-texto-principal);
+    }
+    html.dark .sidebar-toggle-btn {
+        color: var(--cor-texto-invertido);
+    }
+    .sidebar-toggle-btn i {
+        transform: rotate(0deg) !important; 
+        content: "\f0c9"; 
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        vertical-align: middle;
+    }
+    
+    /* Header do Conteúdo Principal (onde o hamburger vai ficar) */
+    .main-content-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+    .app-layout {
+        position: relative;
+    }
+
+    /* ✅ CORREÇÃO (BUG 3): Lógica de "esconder" o menu */
+    .sidebar {
+        position: relative;
+        width: 18rem;
+        z-index: 1000;
+        transition: margin-left 0.3s ease;
+    }
+    
+    /* Estado COLAPSADO (true) = ESCONDIDO no mobile */
+    .app-layout.sidebar-collapsed .sidebar {
+        margin-left: -18rem;
+    }
+    
+    /* Estado EXPANDIDO (false) = VISÍVEL no mobile */
+    .app-layout:not(.sidebar-collapsed) .sidebar {
+        margin-left: 0;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    
+    /* Overlay para escurecer o fundo */
+    .mobile-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 999;
+    }
+    /* Mostra overlay quando menu está EXPANDIDO (false) */
+    .app-layout:not(.sidebar-collapsed) .mobile-overlay {
+        display: block;
+    }
+
+    /* O conteúdo principal NUNCA tem margem no mobile */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 1.5rem;
+    }
+    
+    /* Empilhamento de grids (KPIs, Gráfico, Tabela) */
+    .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
+         grid-template-columns: 1fr;
+    }
+    .grid.grid-cols-1.lg\:grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+    .lg\:col-span-2,
+    #processos-recentes-card {
+        overflow-x: auto;
+    }
+
+    /* Bônus: Garante que a tabela não encolha demais */
+    #processos-recentes-card table {
+        min-width: 400px;
+    }
+    /* Bônus: Garante que o gráfico não encolha demais */
+    .lg\:col-span-2 div {
+        min-width: 500px;
+    }
 }
