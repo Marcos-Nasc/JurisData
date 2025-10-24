@@ -256,58 +256,77 @@ html {
 }
 
 .has-submenu .submenu {
-    display: none;
-    list-style: none;
-    margin-top: 0.5rem;
-    padding-left: 0;
-    
-    position: relative;
-    margin-left: 2.75rem; 
+  display: none;
+  list-style: none;
+  margin-top: 0.5rem; /* Espaço entre o item pai (Relatórios) e o primeiro filho */
+  padding-left: 0;
+  position: relative;
 }
 
-.has-submenu .submenu::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -1rem; 
-    height: 100%;
-    width: 1px; 
-    background-color: var(--cor-sidebar-hover);
-}
-
-.has-submenu.open .submenu {
-    display: block;
-}
-
-.submenu li {
-    position: relative; 
-}
-
-.submenu a {
-    display: block;
-    padding: 0.5rem 0; 
-    font-size: 0.9rem; /* ✅ CORRIGIDO (Revertido) */
-    color: var(--cor-sidebar-texto); 
-    text-decoration: none;
-    border-radius: var(--raio-borda);
-    transition: var(--transicao-base);
-    position: relative;
-}
-
+/* Removemos todas as linhas-guia (::before) */
+.has-submenu .submenu::before,
 .submenu a::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -1rem; 
-    height: 1px; 
-    width: 0.5rem; /* 8px -> 0.5rem */
-    background-color: var(--cor-sidebar-hover);
-    transform: translateY(-50%);
+  display: none;
 }
 
-.submenu a:hover,
+/* Exibe o submenu quando a classe .open é adicionada (via JS) */
+.has-submenu.open .submenu {
+  display: block;
+}
+
+/* --- Itens do Submenu (<li>) --- */
+.submenu li {
+  position: relative;
+  /* Adiciona um "respiro" entre os itens. Ajuste conforme gostar. */
+  margin-bottom: 0.2rem;
+}
+
+/* --- Links do Submenu (<a>) - ONDE A MÁGICA ACONTECE --- */
+.submenu a {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--cor-sidebar-texto); /* Sua cor de texto padrão */
+  text-decoration: none;
+  border-radius: var(--raio-borda); /* Mantém seus cantos arredondados */
+  transition: var(--transicao-base); /* Transição suave */
+  position: relative;
+
+  /* UI/UX: O PADDING é a chave da indentação.
+    - 0.6rem (vertical) cria uma área de clique confortável.
+    - 2.75rem (esquerda) é a indentação, alinhando o texto do submenu
+      com o texto do menu pai (ou um pouco depois do ícone).
+  */
+  padding: 0.6rem 1rem 0.6rem 2.75rem;
+}
+
+/* UI/UX: ESTADO :HOVER (Feedback de interação)
+  Quando o mouse passa por cima.
+*/
+.submenu a:hover {
+  color: var(--cor-texto-invertido); /* Texto mais claro, como no item ativo */
+  
+  /* O mais importante: um fundo sutil.
+    Isso "eleva" o item e mostra que é clicável.
+    Use um RGBA de branco ou preto para ser sutil.
+  */
+  background-color: rgba(255, 255, 255, 0.05); /* Fundo sutil */
+}
+
+/* UI/UX: ESTADO .ACTIVE (Feedback de localização)
+  Para o item que representa a página atual.
+*/
 .submenu a.active {
-    color: var(--cor-texto-invertido); 
+  color: var(--cor-texto-invertido); /* Texto destacado */
+
+  /* Um fundo mais forte para mostrar "Você está aqui".
+    Isso deve ser consistente com seu item "Dashboard" ativo.
+    Se o azul do "Dashboard" for 'var(--cor-sidebar-hover)', use-o.
+  */
+  background-color: rgba(255, 255, 255, 0.1); /* Exemplo: um pouco mais forte que o hover */
+  
+  /* Alternativa (para ficar igual ao "Dashboard"):
+    background-color: var(--cor-sidebar-hover); 
+  */
 }
 
 .nav-link span:not(.arrow) {
@@ -334,6 +353,10 @@ html {
 
 .nav-item.open .submenu {
     display: block;
+}
+
+.filtro-header-mobile, .mobile-header    {
+    display: none;
 }
 
 .modal {
@@ -473,27 +496,11 @@ text-align: left;
     color: var(--cor-sidebar-texto);
 }
 
-.sidebar-footer .logout-button {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0.75rem;
-    border-radius: var(--raio-borda);
-    background-color: var(--cor-sidebar-hover);
-    color: var(--cor-texto-invertido);
-    text-decoration: none;
-    transition: var(--transicao-base);
-    width: 100%;
-    margin-top: 0.5rem;
-}
 
 .sidebar-footer .logout-button:hover {
     background-color: var(--cor-primaria);
 }
 
-.sidebar-footer .logout-button i {
-    margin-right: 0.75rem;
-}
 
 .botao-sucesso {
     background-color: #10B981; 
@@ -591,6 +598,50 @@ input:checked + .slider:before {
     font-size: 12px; 
 }
 
+.submenu {
+    display: none; /* Escondido */
+    padding-left: 2rem; /* Indentação para os sub-itens */
+    overflow: hidden;
+    background-color: rgba(0,0,0,0.1); /* Fundo leve para diferenciar */
+}
+html.dark .submenu {
+     background-color: rgba(0,0,0,0.2);
+}
+
+.submenu li a {
+    display: block;
+    padding: 0.65rem 1.5rem 0.65rem 1.125rem; /* Ajuste no padding (0.625rem + 0.5rem do ícone) */
+    color: var(--cor-sidebar-texto);
+    text-decoration: none;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+.submenu li a:hover {
+    color: var(--cor-texto-invertido);
+    background-color: var(--cor-primaria-transparente);
+}
+
+/* Rotação da Seta (arrow) */
+.nav-item .arrow {
+    transition: transform 0.3s ease;
+}
+.nav-item.open > .submenu-toggle > .arrow {
+    transform: rotate(90deg);
+}
+
+/* ✅ MOSTRA O SUBMENU quando o JS adicionar a classe .open */
+.sidebar-nav .nav-item.open > .submenu {
+    display: block;
+}
+
+/* Garante que o JS funcione no modo colapsado + hover */
+.app-layout.sidebar-collapsed .sidebar:hover .submenu {
+     display: none; /* Anula o !important do modo colapsado */
+}
+.app-layout.sidebar-collapsed .sidebar:hover .nav-item.open > .submenu {
+    display: block; /* Permite que o JS abra o menu */
+}
+
 /* ==================================================================
    ESTILOS DO MODO ESCURO
    ================================================================== */
@@ -625,10 +676,6 @@ html.dark .kpi-text .kpi-title {
  font-weight: bold;
 }
 
-html.dark .kpi-text .kpi-value {
- color: var(--cor-texto-invertido); /* Branco */
-}
-
 /* Tabela de Processos Recentes */
 html.dark .uppercase.bg-gray-50 {
     background-color: #4A5568; /* Cinza mais escuro */
@@ -642,27 +689,15 @@ html.dark .border-b {
    ✅ CORREÇÃO: ESTILO BASE DO BOTÃO SAIR
    ========================================================================== */
 
-.sidebar-footer .logout-button {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0.75rem;
-    border-radius: var(--raio-borda);
-    background-color: var(--cor-sidebar-hover);
-    color: var(--cor-texto-invertido);
-    text-decoration: none;
-    transition: var(--transicao-base);
-    width: 100%;
-}
 .sidebar-footer .logout-button span {
-    display: inline; /* ✅ CORRIGIDO: Texto visível por padrão */
     margin-left: 0.75rem;
+    margin-bottom: 0.3rem;
 }
+
 .sidebar-footer .logout-button i {
-    margin-right: 0;
-    width: 1.25rem;
-    text-align: center;
+    margin-top: 0.1rem;
 }
+
 .sidebar-footer .logout-button:hover {
     background-color: var(--cor-primaria);
 }
@@ -701,12 +736,14 @@ html.dark .border-b {
     height: 5.3125rem;
 }
 
-/* --- Botão de "Pin" (Toggle) --- */
 .sidebar-toggle-btn {
-    display: none; /* Escondido por padrão */
+    display: flex; /* Escondido por padrão */
+    text-align: center;
+    justify-content: center;
     position: absolute;
     top: 1.9rem;
-    left: 17rem;
+    left: 100%;
+    transform: translateX(-50%); 
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
@@ -715,26 +752,22 @@ html.dark .border-b {
     color: var(--cor-sidebar-texto);
     cursor: pointer;
     z-index: 20;
-    transition: transform 0.3s ease, right 0.3s ease, background-color 0.3s, color 0.3s;
+    
+    /* 👇 CORREÇÃO 1: Transição atualizada */
+    transition: transform 0.3s ease, left 0.3s ease, background-color 0.3s, color 0.3s;
 }
 html.dark .sidebar-toggle-btn {
-    border-color: #1A202C; /* Fundo do main-content escuro */
+    border-color: #1A202C; 
 }
 .sidebar-toggle-btn:hover {
     color: var(--cor-texto-invertido);
     background-color: var(--cor-primaria);
 }
 .sidebar-toggle-btn i {
-transition: transform 0.3s ease;
-margin: 0;         /* Remove qualquer margem do ícone */
-    padding: 0;        /* Remove qualquer padding do ícone */
-    line-height: 1;    /* Força a altura da linha a ser 1 */
-    font-size: 0.9rem; /* Leve ajuste no tamanho da seta */
-}
-
-.sidebar-toggle-btn i::before {
-    vertical-align: middle;
-    line-height: 1;
+    transition: transform 0.3s ease;
+    margin: 0;
+    padding: 0;
+    line-height: 1;font-size: 0.9rem;
 }
 
 /* --- Novo Footer de Perfil com Avatar --- */
@@ -749,6 +782,82 @@ margin: 0;         /* Remove qualquer margem do ícone */
     /* gap: 10px; */ /* Removido para centralizar corretamente */
 }
 
+/* ==========================================================================
+   ✅ NOVOS ESTILOS: SIDEBAR COLAPSÁVEL (TABLET/DESKTOP)
+   ========================================================================== */
+
+/* --- Transições Suaves --- */
+.sidebar,
+.main-content {
+    transition: all 0.3s ease-in-out;
+}
+
+.sidebar * {
+    transition: all 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+/* --- ✅ NOVO: Estilos do Logo (Ícone vs Imagem) --- */
+.logo-container {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo-icon {
+    display: none;
+    /* Escondido por padrão */
+    padding: 1rem;
+    /* Padding para centralizar */
+    line-height: 1;
+}
+
+.logo-icone {
+    width: 2.5rem;
+    /* 40px */
+    height: 2.5rem;
+    /* 40px */
+}
+
+.logo-image {
+    display: block;
+    /* Visível por padrão */
+    width: 100%;
+    height: 5.3125rem;
+}
+
+
+html.dark .sidebar-toggle-btn {
+    border-color: #1A202C;
+}
+
+.sidebar-toggle-btn:hover {
+    color: var(--cor-texto-invertido);
+    background-color: var(--cor-primaria);
+}
+
+.sidebar-toggle-btn i {
+    transition: transform 0.3s ease;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    font-size: 0.9rem;
+}
+
+
+
+/* --- Novo Footer de Perfil com Avatar --- */
+/* --- Estilos do Interruptor de Tema (Sidebar) --- */
+.theme-switcher {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* ✅ CORREÇÃO (BUG 1): Padding vertical igual (10px) */
+    padding: 10px 20px;
+    border-top: 1px solid var(--cor-sidebar-hover);
+    /* gap: 10px; */
+    /* Removido para centralizar corretamente */
+}
+
 /* ==================================================================
    ✅ CORREÇÃO (UI/UX): Novo Footer do Usuário
    ================================================================== */
@@ -757,110 +866,110 @@ margin: 0;         /* Remove qualquer margem do ícone */
 .user-profile-footer {
     display: flex;
     align-items: center;
-    padding: 0.75rem 1rem; /* 12px 16px */
+    padding: 0.75rem 1rem;
+    /* 12px 16px */
     border-top: 1px solid var(--cor-sidebar-hover);
 }
 
 .user-avatar {
-    display: flex; /* Sempre visível */
+    display: flex;
+    /* Sempre visível */
     align-items: center;
     justify-content: center;
-    width: 2.5rem;   /* 40px */
-    height: 2.5rem;  /* 40px */
+    width: 2.5rem;
+    /* 40px */
+    height: 2.5rem;
+    /* 40px */
     border-radius: 50%;
-    background-color: var(--cor-primaria); /* Padrão, se a cor PHP não for usada */
+    background-color: var(--cor-primaria);
+    /* Padrão, se a cor PHP não for usada */
     color: var(--cor-texto-invertido);
     font-weight: 600;
     font-size: 1rem;
     flex-shrink: 0;
 }
+
 .user-avatar span {
-    line-height: 1; /* Alinhamento vertical */
+    line-height: 1;
+    /* Alinhamento vertical */
 }
 
 .user-info {
-    display: block; /* Sempre visível */
+    display: block;
+    /* Sempre visível */
     flex-grow: 1;
     margin-left: 0.75rem;
 }
+
 .user-info .user-name {
     font-weight: 600;
     color: var(--cor-texto-invertido);
     font-size: 1rem;
 }
+
 .user-info .user-role {
     font-size: 0.875rem;
     color: var(--cor-sidebar-texto);
 }
-
 
 /* Bloco 3: O Botão Sair (Agora separado) */
 .logout-button {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 0.625rem;
-    padding: 0.75rem 1.5rem; /* Mais padding, como um item de menu */
-    margin: 0.5rem 1rem; /* Espaçamento */
+    padding: 0.75rem 1.3rem;
     border-radius: var(--raio-borda);
     background-color: var(--cor-sidebar-hover);
     color: var(--cor-sidebar-texto);
     text-decoration: none;
-    transition: var(--transicao-base);
-    width: calc(100% - 2rem); /* Largura total menos as margens */
-    box-sizing: border-box;
-    padding: 0.75rem 1.5rem;
+    margin-top: 0.5rem;
 }
+
 .logout-button:hover {
     background-color: var(--cor-primaria);
     color: var(--cor-texto-invertido);
 }
-.logout-button i {
-width: 1.25rem;
 
-text-align: center;
-line-height: 1; /* ✅ ADICIONADO: Força o alinhamento do ícone */
-}
-.logout-button span {
-line-height: 1; /* ✅ ADICIONADO: Garante que o texto e o ícone tenham a mesma base */
-}
 
 
 /* --- ESTADO COLAPSADO (Como o novo footer se comporta) --- */
 @media (min-width: 768px) {
-    
-    /* Mostra o botão "Pin" no tablet/desktop */
+
     .sidebar-toggle-btn {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     /* --- LAYOUT GERAL COLAPSADO --- */
     .app-layout.sidebar-collapsed .sidebar {
-        width: 5.5rem; /* Largura colapsada */
+        width: 5.5rem;
+        /* Largura colapsada */
     }
-    
+
     /* Gira o botão "Pin" */
     .app-layout.sidebar-collapsed .sidebar-toggle-btn {
-       top: 1.4rem; /* Ajuste fino visual para alinhar com o ícone */
-        left: 4.25rem;
+        top: 1.4rem;
+        /* Ajuste fino visual para alinhar com o ícone */
     }
+
     .app-layout.sidebar-collapsed .sidebar-toggle-btn i {
-transform: rotate(180deg); 
+        transform: rotate(180deg);
     }
-    
-    /* --- ✅ REGRAS QUE FALTAVAM (LOGO) --- */
-    .app-layout.sidebar-collapsed .sidebar {
-        overflow: hidden; 
-    }
+
     .app-layout.sidebar-collapsed .logo-container {
         justify-content: center;
         padding: 0.35rem 0;
     }
+
     .app-layout.sidebar-collapsed .logo-image {
-        display: none; /* Esconde logo completa */
+        display: none;
+        /* Esconde logo completa */
     }
+
     .app-layout.sidebar-collapsed .logo-icon {
-        display: block; /* Mostra logo ícone */
+        display: block;
+        /* Mostra logo ícone */
         padding: 1rem 0;
     }
 
@@ -868,221 +977,66 @@ transform: rotate(180deg);
     .app-layout.sidebar-collapsed .nav-link {
         justify-content: center;
         padding-top: 1rem;
-      padding-bottom: 1rem;
+        padding-bottom: 1rem;
     }
+
     .app-layout.sidebar-collapsed .nav-link span,
     .app-layout.sidebar-collapsed .nav-link .arrow {
-        display: none; /* Esconde o texto e a seta */
+        display: none;
+        /* Esconde o texto e a seta */
     }
+
     .app-layout.sidebar-collapsed .nav-link i {
         margin-right: 0;
-        font-size: 1.25rem; /* Ícone fica um pouco maior */
+        font-size: 1.25rem;
+        /* Ícone fica um pouco maior */
         width: 1.25rem;
         text-align: center;
     }
+
     .app-layout.sidebar-collapsed .submenu {
-        display: none !important; /* Força o fechamento de submenus */
+        display: none !important;
+        /* Força o fechamento de submenus */
     }
 
     /* --- FOOTER COLAPSADO (Já estava correto) --- */
     .app-layout.sidebar-collapsed .theme-label {
         display: none;
     }
+
     .app-layout.sidebar-collapsed .theme-switcher {
         justify-content: center;
         padding-left: 0;
         padding-right: 0;
     }
+
     /* ... (resto das regras do footer .user-profile-footer, .user-avatar, etc.) ... */
     .app-layout.sidebar-collapsed .user-profile-footer {
         flex-direction: column;
         padding: 0.75rem;
     }
+
     .app-layout.sidebar-collapsed .user-avatar {
-        margin: 0; 
+        margin: 0;
     }
+
     .app-layout.sidebar-collapsed .user-info {
-        display: none; 
+        display: none;
     }
-    .app-layout.sidebar-collapsed .logout-button {
-        width: 2.5rem; 
-        height: 2.5rem;
-        justify-content: center;
-        margin: 0.5rem auto; 
-        padding: 0;
-    }
+
     .app-layout.sidebar-collapsed .logout-button span {
-        display: none; 
-    }
-    .app-layout.sidebar-collapsed .logout-button i {
-        margin: 0; 
+        display: none;
+        margin: auto;
     }
 
-    /* --- HOVER NO COLAPSADO (Já estava correto) --- */
-    /* ... (regras de .app-layout.sidebar-collapsed .sidebar:hover) ... */
-     .app-layout.sidebar-collapsed .sidebar:hover {
-        width: 18rem; /* Expande para a largura original */
-        position: fixed; 
-        z-index: 100;
-        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-    }
-    
-    /* Traz de volta todos os itens escondidos */
-    .app-layout.sidebar-collapsed .sidebar:hover .logo-container {
-        justify-content: flex-start;
-        padding: 0; /* Volta ao normal */
-    }
-    .app-layout.sidebar-collapsed .sidebar:hover .logo-image {
-        display: block;
-    }
-    .app-layout.sidebar-collapsed .sidebar:hover .logo-icon {
-        display: none;
-    }
 
-    .app-layout.sidebar-collapsed .sidebar:hover .nav-link {
-        justify-content: flex-start;
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-    }
-    .app-layout.sidebar-collapsed .sidebar:hover .nav-link span,
-    .app-layout.sidebar-collapsed .sidebar:hover .nav-link .arrow {
-        display: block;
-    }
-    .app-layout.sidebar-collapsed .sidebar:hover .nav-link i {
-        margin-right: 0.625rem;
-        font-size: 1rem;
-    }
-    
-    .app-layout.sidebar-collapsed .sidebar:hover .theme-label {
-        display: block;
-    }
-    .app-layout.sidebar-collapsed .sidebar:hover .theme-switcher {
-        justify-content: space-between;
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-    
-    .app-layout.sidebar-collapsed .sidebar:hover .user-profile-footer {
-        flex-direction: row;
-        align-items: center;
-        gap: 0;
-        padding: 0.75rem 1rem;
-    }
-    .app-layout.sidebar-collapsed .sidebar:hover .user-info {
-        display: block; /* Mostra o nome/cargo */
-    }
-    .app-layout.sidebar-collapsed .sidebar:hover .logout-button {
-        width: auto;
-        height: auto;
-        padding: 0.75rem;
-        margin-left: 0.5rem;
-    }
-    .app-layout.sidebar-collapsed .sidebar:hover .logout-button span {
-        display: inline; /* Mostra "Sair" */
-    }
-    .app-layout.sidebar-collapsed .sidebar:hover .logout-button i {
-        margin-right: 0.75rem;
-    }
-    
-    .app-layout.sidebar-collapsed .sidebar:hover .sidebar-toggle-btn {
-        display: none;
+}
+
+@media (min-width: 768px) {
+    .bottom-nav,
+    .bottom-sheet,
+    .bottom-sheet-backdrop {
+        display: none !important;
     }
 }
 
-
-/* ==========================================================================
-   ✅ LAYOUT MOBILE (CELULAR) - LÓGICA CORRIGIDA
-   ========================================================================== */
-
-@media (max-width: 767.98px) {
-    /* O botão de toggle vira "hamburger" e vai para o header */
-    .sidebar-toggle-btn {
-        display: block;
-        position: static;
-        width: 2.5rem;
-        height: 2.5rem;
-        border: none;
-        background: none;
-        color: var(--cor-texto-principal);
-    }
-    html.dark .sidebar-toggle-btn {
-        color: var(--cor-texto-invertido);
-    }
-    .sidebar-toggle-btn i {
-        transform: rotate(0deg) !important; 
-        content: "\f0c9"; 
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        vertical-align: middle;
-    }
-    
-    /* Header do Conteúdo Principal (onde o hamburger vai ficar) */
-    .main-content-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1rem;
-    }
-    .app-layout {
-        position: relative;
-    }
-
-    /* ✅ CORREÇÃO (BUG 3): Lógica de "esconder" o menu */
-    .sidebar {
-        position: relative;
-        width: 18rem;
-        z-index: 1000;
-        transition: margin-left 0.3s ease;
-    }
-    
-    /* Estado COLAPSADO (true) = ESCONDIDO no mobile */
-    .app-layout.sidebar-collapsed .sidebar {
-        margin-left: -18rem;
-    }
-    
-    /* Estado EXPANDIDO (false) = VISÍVEL no mobile */
-    .app-layout:not(.sidebar-collapsed) .sidebar {
-        margin-left: 0;
-        box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    }
-    
-    /* Overlay para escurecer o fundo */
-    .mobile-overlay {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.4);
-        z-index: 999;
-    }
-    /* Mostra overlay quando menu está EXPANDIDO (false) */
-    .app-layout:not(.sidebar-collapsed) .mobile-overlay {
-        display: block;
-    }
-
-    /* O conteúdo principal NUNCA tem margem no mobile */
-    .main-content {
-        margin-left: 0 !important;
-        padding: 1.5rem;
-    }
-    
-    /* Empilhamento de grids (KPIs, Gráfico, Tabela) */
-    .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
-         grid-template-columns: 1fr;
-    }
-    .grid.grid-cols-1.lg\:grid-cols-3 {
-        grid-template-columns: 1fr;
-    }
-    .lg\:col-span-2,
-    #processos-recentes-card {
-        overflow-x: auto;
-    }
-
-    /* Bônus: Garante que a tabela não encolha demais */
-    #processos-recentes-card table {
-        min-width: 400px;
-    }
-    /* Bônus: Garante que o gráfico não encolha demais */
-    .lg\:col-span-2 div {
-        min-width: 500px;
-    }
-}

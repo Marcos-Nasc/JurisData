@@ -188,6 +188,7 @@ try {
 
         </main>
     </div>
+    <script src="../js/app.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Gráfico de Linha
@@ -225,6 +226,6 @@ try {
     });
     const BASE_URL = '<?php echo BASE_URL; ?>';
 </script>
-<script src="../js/script.js"></script>
+
 </body>
 </html>

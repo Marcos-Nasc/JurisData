@@ -1,0 +1,263 @@
+/* ========================================================== */
+/* INÍCIO DO CÓDIGO MOBILE RESPONSIVO (CORRIGIDO E OTIMIZADO) */
+/* ========================================================== */
+
+@media (max-width: 767.98px) {
+
+    html {
+        font-size: 100%;
+    }
+
+    /* --- 1. TRAVA O SCROLL GLOBAL --- */
+    html, body {
+        overflow: hidden !important;
+        height: 100dvh;
+        width: 100vw;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        touch-action: none;
+    }
+
+    /* --- 2. HEADER MOBILE --- */
+    .mobile-header {
+        display: flex;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        padding: 0 16px;
+        background-color: var(--cor-sidebar-fundo);
+        border-bottom: 1px solid var(--cor-sidebar-hover, #2D3748);
+        z-index: 900;
+        gap: 16px;
+    }
+
+    .mobile-menu-btn {
+        background: none;
+        border: none;
+        color: var(--cor-sidebar-texto, #A0AEC0);
+        font-size: 1.25rem;
+        cursor: pointer;
+        padding: 8px;
+        margin-left: -8px;
+    }
+
+    .mobile-header-logo .logo-icone-header {
+        height: 32px;
+    }
+
+    /* --- 3. OVERLAY --- */
+    .mobile-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100dvh;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    .mobile-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* --- 4. SCROLL LOCK --- */
+    body.mobile-menu-open {
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    /* --- 5. SIDEBAR --- */
+    .sidebar {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100dvh;
+        min-height: -webkit-fill-available;
+        width: 280px;
+        max-width: 85vw;
+        z-index: 999;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background-color: var(--cor-sidebar-fundo);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-out;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar .sidebar-toggle-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: transparent;
+        color: var(--cor-sidebar-texto, #A0AEC0);
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .sidebar .sidebar-toggle-btn:hover {
+        background-color: var(--cor-sidebar-hover, #2D3748);
+    }
+
+    .sidebar .sidebar-toggle-btn i::before {
+        content: '\f00d';
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+    }
+
+    /* --- 6. SUBMENU --- */
+    .sidebar .submenu {
+        display: none;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.15);
+        padding-left: 20px;
+    }
+
+    .sidebar .nav-item.active > .submenu {
+        display: block;
+    }
+
+    .sidebar .nav-item.active .arrow {
+        transform: rotate(90deg);
+    }
+
+    .sidebar .nav-link .arrow {
+        transition: transform 0.2s ease;
+    }
+
+    /* --- 7. CONTEÚDO PRINCIPAL --- */
+    .main-content,
+    .app-layout.sidebar-collapsed .main-content,
+    .app-layout .main-content {
+        margin-left: 0 !important;
+        padding: 75px 16px 24px 16px; 
+        height: 100dvh;
+        overflow-y: auto;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+    }
+
+    /* --- 8. CABEÇALHO / BEM-VINDO / FILTRO --- */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+    }
+
+    .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--cor-texto-principal);
+        margin: 0;
+    }
+
+    .page-subtitle {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--cor-texto-secundario);
+        margin-bottom: 16px;
+    }
+
+    .page-filter-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .page-filter-group select {
+        width: auto;
+        min-width: 100px;
+        padding: 8px 12px;
+        background-color: var(--cor-superficie);
+        color: var(--cor-texto-principal);
+        border: 1px solid var(--cor-borda);
+        border-radius: var(--raio-borda);
+        font-size: 0.9rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23A0AEC0' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        padding-right: 28px;
+    }
+
+    /* 🔥 Reexibe o filtro e o bem-vindo */
+    #filtro-card,
+    .filtro-header-mobile,
+    .page-subtitle {
+        display: block !important;
+    }
+
+    /* --- 9. TABELAS EM FORMATO DE CARDS --- */
+    .table-container thead {
+        display: none;
+    }
+
+    .table-container tr {
+        display: block;
+        background-color: var(--cor-superficie);
+        border-radius: var(--raio-borda);
+        padding: 16px;
+        margin-bottom: 12px;
+        border: 1px solid var(--cor-borda);
+    }
+
+    .table-container td {
+        display: block;
+        padding: 0;
+        border: none;
+        font-size: 0.95rem;
+        color: var(--cor-texto-principal);
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-break: break-all;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    .table-container td::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--cor-texto-secundario);
+        margin-bottom: 4px;
+        margin-top: 10px;
+    }
+
+    .table-container tr td:first-child {
+        color: var(--cor-info);
+        font-weight: 500;
+        margin-top: 0;
+    }
+
+    .table-container tr td:first-child::before {
+        margin-top: 0;
+    }
+}

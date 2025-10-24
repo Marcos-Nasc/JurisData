@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    
+     
     // ==================================================================
     // LÓGICA GLOBAL: TEMA (MODO ESCURO)
     // ==================================================================
@@ -26,16 +26,44 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 2. Salva a escolha do usuário ao clicar no toggle
+    // 2. Salva a escolha do usuário ao clicar no toggle (VERSÃO UNIFICADA)
     if (themeToggle) {
         themeToggle.addEventListener('change', function() {
+            
+            const html = document.documentElement; // Pega o <html>
+            let tema; // Variável para o fetch
+
+            // 2a. Aplica a classe e salva no localStorage (lógica do app.js)
             if (this.checked) {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem(THEME_KEY, 'dark'); // Salva "dark"
+                html.classList.add('dark');
+                localStorage.setItem(THEME_KEY, 'dark'); // Usa a constante THEME_KEY
+                tema = 'dark';
             } else {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem(THEME_KEY, 'light'); // Salva "light"
+                html.classList.remove('dark');
+                localStorage.setItem(THEME_KEY, 'light'); // Usa a constante THEME_KEY
+                tema = 'light';
             }
+
+            // 2b. Envia a requisição para o servidor (lógica do script.js)
+            // Certifique-se que a variável 'BASE_URL' esteja acessível globalmente
+            const formData = new FormData();
+            formData.append('tema', tema);
+
+            fetch(BASE_URL + '/php/ajax_salvar_tema.php', { 
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('Preferência salva no servidor.');
+                } else {
+                    console.warn('Falha ao salvar tema no servidor:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro de rede ao salvar tema:', error);
+            });
         });
     }
     
@@ -63,7 +91,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Aplica a classe CSS no layout
     function applySidebarState(isCollapsed) {
-         appLayout.classList.toggle('sidebar-collapsed', isCollapsed);
+          if (appLayout) {
+               appLayout.classList.toggle('sidebar-collapsed', isCollapsed);
+          }
     }
 
     // Move o botão de toggle (hamburger no mobile, "pin" no desktop)
@@ -95,52 +125,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (h1) {
                     const divMb6 = mainContent.querySelector('div.mb-6');
                     if(divMb6) {
-                        divMb6.prepend(h1);
+                         divMb6.prepend(h1);
                     } else {
                          mainContent.prepend(h1);
                     }
                 }
                 header.remove(); 
             }
-            appLayout.appendChild(sidebarToggle);
+            if (sidebarHeader) {
+                sidebarHeader.appendChild(sidebarToggle);
+            }
         }
     }
 
     // --- 2. Função Principal de Decisão (ao carregar e redimensionar) ---
-    // ... (início do app.js)
+    function handleLayout() {
+        const isMobile = window.innerWidth <= 767.98;
+        
+        moveSidebarToggle(); // 1. Sempre move o botão para o lugar certo
 
-    // --- 2. Função Principal de Decisão (ao carregar e redimensionar) ---
-    function handleLayout() {
-        const isMobile = window.innerWidth <= 767.98;
-        
-        moveSidebarToggle(); // 1. Sempre move o botão para o lugar certo
+        if (isMobile) {
+            // No MOBILE, está sempre escondido (colapsado = true)
+            applySidebarState(true); 
+            return; 
+        }
 
-        if (isMobile) {
-            // No MOBILE, está sempre escondido (colapsado = true)
-            applySidebarState(true); 
-            return; 
-        }
-
-        // ✅ CORRIGIDO: Em TABLET e DESKTOP (qualquer tela > 767.98px), 
-        // a lógica agora respeita o localStorage.
-        
-        const savedState = localStorage.getItem(SIDEBAR_STATE_KEY);
-        
-        // Se 'savedState' for 'true', aplica true.
-        // Se for 'false' ou null (primeira visita), aplica false (expandido).
-        applySidebarState(savedState === 'true');
-    }
-
-// ... (resto do app.js)
+        // Em TABLET e DESKTOP (qualquer tela > 767.98px), 
+        // a lógica agora respeita o localStorage.
+        
+        const savedState = localStorage.getItem(SIDEBAR_STATE_KEY);
+        
+        // Se 'savedState' for 'true', aplica true.
+        // Se for 'false' ou null (primeira visita), aplica false (expandido).
+        applySidebarState(savedState === 'true');
+    }
 
     // --- 3. Event Listeners ---
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', function() {
-            const isCurrentlyCollapsed = appLayout.classList.contains('sidebar-collapsed');
-            const newState = !isCurrentlyCollapsed;
-            
-            applySidebarState(newState); // Aplica a classe
-            saveSidebarState(newState);  // Salva a preferência
+             if (appLayout) {
+                const isCurrentlyCollapsed = appLayout.classList.contains('sidebar-collapsed');
+                const newState = !isCurrentlyCollapsed;
+                
+                applySidebarState(newState); // Aplica a classe
+                saveSidebarState(newState);  // Salva a preferência
+             }
         });
     }
 
@@ -161,4 +190,47 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- 4. Execução Inicial ---
     handleLayout(); // Roda a lógica 1x no carregamento da página
 
+    
+    // ==================================================================
+    // LÓGICA DO SUBMENU (AGORA SEM CONFLITO)
+    // ==================================================================
+    const submenuToggles = document.querySelectorAll('.sidebar-nav .submenu-toggle');
+
+    submenuToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault(); // Impede que o link '#' vá para o topo da página
+
+            // Pega o <li> pai (o .nav-item)
+            const navItem = this.closest('.nav-item'); 
+            if (!navItem) return;
+
+            // --- NOVO: VERIFICA SE A SIDEBAR ESTÁ COLAPSADA ---
+            // As variáveis 'appLayout', 'applySidebarState' e 'saveSidebarState'
+            // já foram definidas acima na lógica da Sidebar Responsiva.
+            if (appLayout && appLayout.classList.contains('sidebar-collapsed')) {
+                // Se estiver, expande ela primeiro
+                applySidebarState(false); // Expande (isCollapsed = false)
+                saveSidebarState(false);  // Salva o estado expandido
+            }
+            // --- FIM DA ADIÇÃO ---
+
+            const isCurrentlyOpen = navItem.classList.contains('open');
+
+            // 1. Fecha TODOS os outros menus que estiverem abertos
+            document.querySelectorAll('.sidebar-nav .nav-item.open').forEach(openItem => {
+                if (openItem !== navItem) {
+                    openItem.classList.remove('open');
+                }
+            });
+            
+            // 2. Abre ou fecha o menu que foi clicado
+          if (isCurrentlyOpen) {
+                navItem.classList.remove('open');
+            } else {
+                navItem.classList.add('open');
+            }
+        });
+    });
+
 }); // Fim do DOMContentLoaded
+

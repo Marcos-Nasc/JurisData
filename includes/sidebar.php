@@ -31,7 +31,20 @@ $user_initials = getInitials($_SESSION['nome_usuario'] ?? 'Usuário');
 $avatar_color = getAvatarColor($_SESSION['nome_usuario'] ?? 'U'); // Pega a cor
 ?>
 
-<aside class="sidebar border-r border-gray-700">
+<header class="mobile-header">
+        <button id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Abrir menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <a href="<?php echo BASE_URL; ?>/index.php" class="mobile-header-logo">
+            <img src="<?php echo BASE_URL; ?>/images/logo.png" alt="Icone Reviver" class="logo-icone-header">
+        </a>
+    </header>
+
+    <div class="mobile-overlay" id="mobile-overlay"></div>
+
+
+    <aside class="sidebar border-r border-gray-700">
     <div class="sidebar-header">
         <a href="<?php echo BASE_URL; ?>/index.php" class="logo-container">
             <i class="logo-icon"><img src="<?php echo BASE_URL; ?>/images/logo_icone.png" alt="Icone Reviver" class="logo-icone"></i>
@@ -42,6 +55,8 @@ $avatar_color = getAvatarColor($_SESSION['nome_usuario'] ?? 'U'); // Pega a cor
             <i class="fas fa-chevron-left"></i>
         </button>
     </div>
+
+    <div class="mobile-overlay" id="mobile-overlay"></div>
 
     <nav class="sidebar-nav">
         <ul class="nav-list">
@@ -61,7 +76,7 @@ $avatar_color = getAvatarColor($_SESSION['nome_usuario'] ?? 'U'); // Pega a cor
                     <li><a href="<?php echo BASE_URL; ?>/php/performance_financeira.php">Performance Financeira</a></li>
                     <li><a href="<?php echo BASE_URL; ?>/php/provisao_risco.php">Provisão de Risco</a></li>
                     <li><a href="<?php echo BASE_URL; ?>/php/volume_entrada.php">Volume de Entrada</a></li>
-                </ul>
+                </ul>   
             </li>
             <li class="nav-item has-submenu">
                 <a href="#" class="nav-link submenu-toggle">
@@ -82,6 +97,11 @@ $avatar_color = getAvatarColor($_SESSION['nome_usuario'] ?? 'U'); // Pega a cor
                 </a>
                 <ul class="submenu">
                     <li><a href="<?php echo BASE_URL; ?>/php/configuracoes_gerais.php">Configurações Gerais</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/php/aparencia.php">Aparência</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/php/manutencao.php">Manutenção</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/php/configuracoes_usuarios.php">Usuários</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/php/config_banco.php">Banco de Dados</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/php/logs.php">Logs de Atividade</a></li>
                     </ul>
             </li>
         </ul>
@@ -106,10 +126,10 @@ $avatar_color = getAvatarColor($_SESSION['nome_usuario'] ?? 'U'); // Pega a cor
             <span class="user-role"><?php echo htmlspecialchars($_SESSION['cargo_usuario'] ?? 'Cargo'); ?></span>
         </div>
     </div>
-
     <a href="<?php echo BASE_URL; ?>/includes/logout.php" class="logout-button">
         <i class="fas fa-sign-out-alt"></i>
         <span>Sair</span>
     </a>
+
 </div>
 </aside>

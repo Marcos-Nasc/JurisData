@@ -81,10 +81,11 @@ try {
 <html lang="pt-br" class="<?php echo $themeClass; ?>">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"   >
     <title>Dashboard - Sistema Jurídico</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -99,9 +100,21 @@ try {
     <div class="app-layout">
         <?php require_once 'includes/sidebar.php'; ?>
         <main class="main-content bg-gray-100">
-            <div class="mb-6">
-                <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-                <h2 class="text-lg text-gray-700">Bem-vindo(a), <?php echo htmlspecialchars($_SESSION['nome_usuario'] ?? 'Usuário'); ?>!</h2>
+            <div class="mb-6 dashboard-header-container"> 
+                
+                <div class="dashboard-header-text">
+                    <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+                    <h2 class="text-lg text-gray-700">Bem-vindo(a), <?php echo htmlspecialchars($_SESSION['nome_usuario'] ?? 'Usuário'); ?>!</h2>
+                </div>
+
+                <div class="filtro-header-mobile">
+                    <select name="ano" id="filtro-ano-mobile" class="p-2 rounded-md shadow-sm">
+                        <?php foreach($anos_disponiveis as $ano_opcao): ?>
+                            <option value="<?php echo $ano_opcao; ?>" <?php echo ($ano_opcao == $ano_selecionado) ? 'selected' : ''; ?>><?php echo $ano_opcao; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
             </div>
 
             <div id="filtro-card" class="p-4 rounded-lg shadow-sm mb-6">
@@ -117,9 +130,9 @@ try {
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                <div class="kpi-card"><div class="kpi-text"><p class="kpi-title text-gray-700">Total de Processos (<?php echo $ano_selecionado; ?>)</p><p class="kpi-value"><?php echo $total_processos; ?></p></div><i class="fas fa-gavel kpi-icon" style="color: #2563eb;"></i></div>
-                <div class="kpi-card"><div class="kpi-text"><p class="kpi-title">Risco Provisionado (<?php echo $ano_selecionado; ?>)</p><p class="kpi-value">R$ <?php echo number_format($valor_total_causas, 2, ',', '.'); ?></p></div><i class="fas fa-dollar-sign kpi-icon" style="color: #dc2626;"></i></div>
-                <div class="kpi-card"><div class="kpi-text"><p class="kpi-title">Economia Total (<?php echo $ano_selecionado; ?>)</p><p class="kpi-value">R$ <?php echo number_format($economia_total, 2, ',', '.'); ?></p></div><i class="fas fa-piggy-bank kpi-icon" style="color: #16a34a;"></i></div>
+                <div id="kpi-card-1" class="kpi-card"><div class="kpi-text"><p class="kpi-title">Total de Processos (<?php echo $ano_selecionado; ?>)</p><p class="kpi-value"><?php echo $total_processos; ?></p></div><i class="fas fa-gavel kpi-icon" style="color: #2563eb;"></i></div>
+                <div id="kpi-card-2" class="kpi-card"><div class="kpi-text"><p class="kpi-title">Risco Provisionado (<?php echo $ano_selecionado; ?>)</p><p class="kpi-value">R$ <?php echo number_format($valor_total_causas, 2, ',', '.'); ?></p></div><i class="fas fa-dollar-sign kpi-icon" style="color: #dc2626;"></i></div>
+                <div id="kpi-card-3" class="kpi-card"><div class="kpi-text"><p class="kpi-title">Economia Total (<?php echo $ano_selecionado; ?>)</p><p class="kpi-value">R$ <?php echo number_format($economia_total, 2, ',', '.'); ?></p></div><i class="fas fa-piggy-bank kpi-icon" style="color: #16a34a;"></i></div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -149,9 +162,11 @@ try {
                         <?php else: ?>
                             <?php foreach ($processos_recentes as $processo): ?>
                                 <tr class="border-b dark:border-gray-300">
-                                    <td class="py-4 px-4 whitespace-nowrap"><?php echo htmlspecialchars($processo['numero_processo']); ?></td>
+                                    <td class="py-4 px-4 whitespace-nowrap" data-label="Nº PROCESSO">
+                                        <?php echo htmlspecialchars($processo['numero_processo']); ?>
+                                    </td>
                                     
-                                    <td class="py-4 px-4 truncate" title="<?php echo htmlspecialchars($processo['autor']); ?>">
+                                    <td class="py-4 px-4 truncate" title="<?php echo htmlspecialchars($processo['autor']); ?>" data-label="AUTOR">
                                         <?php echo htmlspecialchars($processo['autor']); ?>
                                     </td>
                                 </tr>
@@ -163,11 +178,11 @@ try {
             </div>
         </main>
     </div>
-
-    <script src="js/script.js"></script>
+    
     <script src="js/app.js"></script>
+    <script src="js/mobile.js"></script>
 
-      <script>
+    <script>
 
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -375,7 +390,7 @@ try {
 
             const corKpiTitulo = isDarkMode ? '#A0AEC0' : '#374151'; // Corrigido para #374151
 
-            const corKpiValor = isDarkMode ? '#E2E8F0' : 'var(--cor-texto-principal)';  // #1A202C
+            const corKpiValor = isDarkMode ? '#ffffffff' : '#000000ff'; // Corrigido para #374151
 
 
 
