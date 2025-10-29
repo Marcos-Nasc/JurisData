@@ -164,7 +164,7 @@ $smtp_from_email = getSetting($pdo, 'smtp_from_email');
     <div class="app-layout">
         <?php require_once '../includes/sidebar.php'; ?>
         <main class="main-content">
-            <h1 class="text-2xl font-bold text-gray-800 mb-6">Configurações Gerais</h1>
+            <h1 id="main-page-title" class="text-2xl font-bold text-gray-800 mb-6">Configurações Gerais</h1>
 
             <?php if ($feedback['message']): ?>
                 <div class="p-4 mb-6 text-sm border-l-4 <?php echo ($feedback['type'] === 'success') ? 'bg-green-100 border-green-500 text-green-700' : (($feedback['type'] === 'info') ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-red-100 border-red-500 text-red-700'); ?>" role="alert">
@@ -172,8 +172,8 @@ $smtp_from_email = getSetting($pdo, 'smtp_from_email');
                 </div>
             <?php endif; ?>
 
-            <div class="bg-white p-6 rounded-lg shadow">
-                <h2 class="text-xl font-semibold text-gray-800 border-b pb-3 mb-4">Configurações de E-mail (SMTP)</h2>
+            <div id="form-card" class="bg-white p-6 rounded-lg shadow">
+                <h2 id="form-card-title" class="text-xl font-semibold text-gray-800 border-b pb-3 mb-4">Configurações de E-mail (SMTP)</h2>
                 <form action="" method="POST">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         
@@ -195,7 +195,7 @@ $smtp_from_email = getSetting($pdo, 'smtp_from_email');
                         <div class="form-group">
                             <label for="smtp_pass" class="block font-medium text-gray-700">Senha SMTP:</label>
                             <input type="password" id="smtp_pass" name="smtp_pass" class="mt-1 form-control w-full p-2 border rounded-md" value="">
-                            <p class="text-xs text-gray-500 mt-1">Deixe em branco para não alterar a senha atual.</p>
+                            <p class="text-xs text-gray-500 mt-1 helper-text">Deixe em branco para não alterar a senha atual.</p>
                         </div>
                         
                         <div class="form-group">
@@ -222,9 +222,89 @@ $smtp_from_email = getSetting($pdo, 'smtp_from_email');
             </div>
         </main>
     </div>
+    
+    <script src="../js/app.js"></script> 
+    <script src="../js/mobile.js"></script> 
+    <script> const BASE_URL = 'http://localhost/juridico'; </script>
+
     <script>
-    const BASE_URL = 'http://localhost/juridico'; 
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // --- FUNÇÕES DE ATUALIZAÇÃO DE TEMA (HTML) ---
+
+        function atualizarTemaTituloPrincipal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const el = document.getElementById('main-page-title');
+            const cor = isDarkMode ? '#E5E7EB' : '#1F2937'; // gray-200 / gray-800
+            if (el) el.style.color = cor;
+        }
+
+        // Target 1: Inputs e Card do Formulário
+        function atualizarTemaFormCard() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const card = document.getElementById('form-card');
+            const cardTitle = document.getElementById('form-card-title');
+            const labels = card.querySelectorAll('label'); // Pega todas as labels dentro do card
+            const inputs = card.querySelectorAll('.form-control'); // Pega todos os inputs/selects/textareas
+            const helperTexts = card.querySelectorAll('.helper-text'); // Pega textos de ajuda (como o da senha)
+
+            // Cores Gerais do Card
+            const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
+            const corTextoTitulo = isDarkMode ? '#E5E7EB' : '#1F2937'; // gray-200 / gray-800 (h2)
+            const corBordaTitulo = isDarkMode ? '#4A5568' : '#E5E7EB'; // gray-600 / gray-200 (border-b)
+            const corTextoLabel = isDarkMode ? '#D1D5DB' : '#374151';  // gray-300 / gray-700 (label)
+            const corTextoHelper = isDarkMode ? '#9CA3AF' : '#6B7280'; // gray-400 / gray-500 (p.text-xs)
+
+            // Cores dos Inputs
+            const corFundoInput = isDarkMode ? '#4A5568' : '#FFFFFF';
+            const corTextoInput = isDarkMode ? '#E2E8F0' : '#111827'; // gray-200 / gray-900
+            const corBordaInput = isDarkMode ? '#6B7280' : '#D1D5DB'; // gray-500 / gray-300
+
+            if (card) card.style.backgroundColor = corFundoCard;
+            if (cardTitle) {
+                 cardTitle.style.color = corTextoTitulo;
+                 cardTitle.style.borderBottomColor = corBordaTitulo;
+            }
+            labels.forEach(label => label.style.color = corTextoLabel);
+            helperTexts.forEach(p => p.style.color = corTextoHelper);
+
+            inputs.forEach(input => {
+                input.style.backgroundColor = corFundoInput;
+                input.style.color = corTextoInput;
+                input.style.borderColor = corBordaInput;
+                // Placeholder (requer mais manipulação ou CSS ::placeholder)
+                // input.style.setProperty('--placeholder-color', isDarkMode ? '#9CA3AF' : '#9CA3AF'); 
+            });
+        }
+
+
+        // --- 3. EXECUÇÃO E OBSERVADOR ---
+
+        function atualizarTudo() {
+            // Atualiza o HTML
+            atualizarTemaTituloPrincipal(); 
+            atualizarTemaFormCard();
+            // Não há gráfico, tabela ou paginação aqui
+        }
+
+        // 1. Roda tudo no carregamento inicial
+        atualizarTudo();
+
+        // 2. Cria o observador para mudar o tema
+        const observer = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    atualizarTudo();
+                }
+            }
+        });
+
+        // 3. Inicia o observador
+        observer.observe(document.documentElement, { attributes: true });
+
+        // BASE_URL já definida no script original
+    });
 </script>
-    <script src="../js/script.js"></script>
-</body>
+
+    </body>
 </html>

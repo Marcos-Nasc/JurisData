@@ -258,8 +258,8 @@ try {
         <?php require_once '../includes/sidebar.php'; ?>
         <main class="main-content">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold text-gray-800">Gerenciamento de Processos</h1>
-                <div class="flex gap-2">
+                <h1 id="main-page-title" class="text-2xl font-bold text-gray-800">Gerenciamento de Processos</h1>
+                <div id="action-buttons-group" class="flex gap-2">
                     <button id="btn-adicionar" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center shadow-sm">
                         <i class="fas fa-plus mr-2"></i>Adicionar Processo
                     </button>
@@ -272,14 +272,14 @@ try {
                 </div>
             </div>
 
-            <div class="bg-white p-4 rounded-lg shadow mb-6">
+            <div id="filtro-card" class="bg-white p-4 rounded-lg shadow mb-6">
                 <form action="" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                     <div>
-                        <label for="busca" class="text-sm font-medium text-gray-700">Buscar:</label>
+                        <label id="busca-label" for="busca" class="text-sm font-medium text-gray-700">Buscar:</label>
                         <input type="text" name="busca" id="busca" value="<?php echo htmlspecialchars($busca); ?>" class="form-control mt-1" placeholder="Nº do processo, autor, matéria...">
                     </div>
                     <div>
-                        <label for="ano-filtro" class="text-sm font-medium text-gray-700">Ano:</label>
+                        <label id="ano-label" for="ano-filtro" class="text-sm font-medium text-gray-700">Ano:</label>
                         <select name="ano" id="ano-filtro" class="form-control mt-1">
                             <option value="">Todos</option>
                             <?php foreach($anos_disponiveis as $ano_opcao): ?>
@@ -288,15 +288,15 @@ try {
                         </select>
                     </div>
                     <div class="flex gap-2">
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Filtrar</button>
-                        <a href="processos_detalhados.php" class="w-full text-center bg-white hover:bg-blue-50 text-blue-600 font-bold py-2 px-4 rounded-lg border border-blue-600">Limpar</a>
+                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Filtrar</button>
+                         <a href="processos_detalhados.php" id="btn-limpar-filtro" class="w-full text-center bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-lg border border-gray-300">Limpar</a>
                     </div>
                 </form>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
+            <div id="table-card" class="bg-white p-6 rounded-lg shadow overflow-x-auto">
                 <table class="w-full text-sm text-left">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <thead id="table-header" class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th class="py-3 px-4">Nº do Processo</th>
                             <th class="py-3 px-4">Autor</th>
@@ -305,12 +305,12 @@ try {
                             <th class="py-3 px-4 text-center">Ações</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="table-body">
                         <?php if (empty($registros)): ?>
                             <tr><td colspan="5" class="text-center py-10 text-gray-500">Nenhum processo encontrado.</td></tr>
                         <?php else: ?>
                             <?php foreach ($registros as $reg): ?>
-                            <tr class="border-b hover:bg-gray-50">
+                            <tr class="border-b">
                                 <td class="py-3 px-4 font-medium text-gray-900"><?php echo htmlspecialchars($reg['numero_processo']); ?></td>
                                 <td class="py-3 px-4"><?php echo htmlspecialchars($reg['autor']); ?></td>
                                 <td class="py-3 px-4"><?php echo htmlspecialchars(date("d/m/Y", strtotime($reg['data_recebimento']))); ?></td>
@@ -327,7 +327,7 @@ try {
             </div>
 
             <?php if ($total_paginas > 1): ?>
-            <div class="pagination">
+            <div id="paginacao-wrapper" class="pagination">
                 <?php if ($pagina_selecionada > 1): ?>
                     <a href="?page=<?php echo $pagina_selecionada - 1; ?>&ano=<?php echo $ano_selecionado; ?>&busca=<?php echo urlencode($busca); ?>">Anterior</a>
                 <?php endif; ?>
@@ -338,11 +338,9 @@ try {
                     echo '<a href="?page=1&ano='.$ano_selecionado.'&busca='.urlencode($busca).'">1</a>';
                     echo '<span class="disabled">...</span>';
                 }
-
                 for ($i = max(1, $pagina_selecionada - $window); $i <= min($total_paginas, $pagina_selecionada + $window); $i++): ?>
                     <a href="?page=<?php echo $i; ?>&ano=<?php echo $ano_selecionado; ?>&busca=<?php echo urlencode($busca); ?>" class="<?php echo ($i == $pagina_selecionada) ? 'active' : ''; ?>"><?php echo $i; ?></a>
                 <?php endfor; ?>
-
                 <?php
                 if ($pagina_selecionada < $total_paginas - $window - 1) {
                     echo '<span class="disabled">...</span>';
@@ -360,13 +358,13 @@ try {
     </div>
 
     <div class="modal" id="modal-processo">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div id="modal-content" class="modal-content">
+            <div id="modal-header" class="modal-header">
                 <h2 id="modal-title">Adicionar Processo</h2>
                 <button class="close-button">&times;</button>
             </div>
             <form id="form-processo">
-                <div class="modal-body">
+                <div id="modal-body" class="modal-body">
                     <input type="hidden" name="action" value="salvar_processo">
                     <input type="hidden" name="processo_id" id="processo_id">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
@@ -383,12 +381,10 @@ try {
                             <input type="date" id="data_recebimento" name="data_recebimento" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="ano">Ano:</label>
-                            <input type="number" id="ano" name="ano" class="form-control" required>
+                            <label for="ano-modal">Ano:</label> <input type="number" id="ano-modal" name="ano" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="mes">Mês:</label>
-                            <select id="mes" name="mes" class="form-control" required>
+                            <label for="mes-modal">Mês:</label> <select id="mes-modal" name="mes" class="form-control" required>
                                 <?php foreach($meses_nomes as $num => $nome): ?>
                                     <option value="<?php echo $num; ?>"><?php echo $nome; ?></option>
                                 <?php endforeach; ?>
@@ -432,118 +428,377 @@ try {
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div id="modal-footer" class="modal-footer">
                      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="../js/script.js"></script>
+    <script src="../js/app.js"></script> 
+    <script src="../js/mobile.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        
+        // ==========================================================
+        // PARTE 1: LÓGICA DO MODAL (DO ARQUIVO "ANTES")
+        // ==========================================================
+        
         const modal = document.getElementById('modal-processo');
         const modalTitle = document.getElementById('modal-title');
         const btnOpen = document.getElementById('btn-adicionar');
-        const btnClose = modal.querySelector('.close-button');
+        // Adicionando verificação: só busca o 'close-button' se o modal existir
+        const btnClose = modal ? modal.querySelector('.close-button') : null;
         const formProcesso = document.getElementById('form-processo');
+        const tableBody = document.querySelector('tbody'); // 'tbody' é onde os botões de editar/excluir estão
 
         const openModal = (title) => {
+            if (!modal) return; // Não faz nada se o modal não existir
             modalTitle.textContent = title;
             modal.style.display = 'flex';
+            // BOA PRÁTICA: Atualiza o tema do modal sempre que ele abrir
+            if(typeof atualizarTemaModal === 'function') {
+                atualizarTemaModal();
+            }
         };
-        const closeModal = () => { modal.style.display = 'none'; formProcesso.reset(); };
+        
+        const closeModal = () => { 
+            if (!modal) return;
+            modal.style.display = 'none'; 
+            if (formProcesso) formProcesso.reset(); 
+        };
 
-        btnClose.addEventListener('click', closeModal);
-        window.addEventListener('click', (event) => { if (event.target == modal) closeModal(); });
+        // --- Event Listeners do Modal ---
 
-        btnOpen.addEventListener('click', () => {
-            formProcesso.reset();
-            formProcesso.querySelector('#processo_id').value = '';
-            openModal('Adicionar Processo');
+        if (btnClose) {
+            btnClose.addEventListener('click', closeModal);
+        }
+        
+        window.addEventListener('click', (event) => { 
+            if (event.target == modal) closeModal(); 
         });
 
-        document.querySelector('tbody').addEventListener('click', function(event) {
-            const target = event.target;
-            const btnEdit = target.closest('.btn-edit');
-            const btnDelete = target.closest('.btn-delete');
+        if (btnOpen) {
+            btnOpen.addEventListener('click', () => {
+                if (formProcesso) {
+                    formProcesso.reset();
+                    formProcesso.querySelector('#processo_id').value = '';
+                }
+                openModal('Adicionar Processo');
+            });
+        }
 
-            if (btnEdit) {
-                const id = btnEdit.dataset.id;
-                fetch(`processos_detalhados.php?action=get_processo&id=${id}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data) {
-                            formProcesso.querySelector('#processo_id').value = data.id;
-                            formProcesso.querySelector('#numero_processo').value = data.numero_processo;
-                            formProcesso.querySelector('#autor').value = data.autor;
-                            formProcesso.querySelector('#data_recebimento').value = data.data_recebimento;
-                            formProcesso.querySelector('#ano').value = data.ano;
-                            formProcesso.querySelector('#mes').value = data.mes;
-                            formProcesso.querySelector('#valor_causa').value = data.valor_causa.replace('.', ',');
-                            formProcesso.querySelector('#materia').value = data.materia;
-                            formProcesso.querySelector('#central_custo').value = data.central_custo;
-                            formProcesso.querySelector('#sentenca_1_instancia').value = data.sentenca_1_instancia;
-                            formProcesso.querySelector('#recurso').value = data.recurso;
-                            formProcesso.querySelector('#despesas_processuais_1').value = data.despesas_processuais_1.replace('.', ',');
-                            formProcesso.querySelector('#despesas_processuais_2').value = data.despesas_processuais_2.replace('.', ',');
-                            formProcesso.querySelector('#valor_pago').value = data.valor_pago.replace('.', ',');
-                            formProcesso.querySelector('#economia').value = data.economia.replace('.', ',');
-                            openModal('Editar Processo');
-                        } else {
-                            Swal.fire('Erro!', 'Não foi possível encontrar o processo.', 'error');
+        if (tableBody) {
+            tableBody.addEventListener('click', function(event) {
+                const target = event.target;
+                const btnEdit = target.closest('.btn-edit');
+                const btnDelete = target.closest('.btn-delete');
+
+                // Botão EDITAR
+                if (btnEdit) {
+                    const id = btnEdit.dataset.id;
+                    fetch(`processos_detalhados.php?action=get_processo&id=${id}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data) {
+                                formProcesso.querySelector('#processo_id').value = data.id;
+                                formProcesso.querySelector('#numero_processo').value = data.numero_processo;
+                                formProcesso.querySelector('#autor').value = data.autor;
+                                formProcesso.querySelector('#data_recebimento').value = data.data_recebimento;
+                                // Corrigindo IDs dos campos 'ano' e 'mes' para corresponder ao seu HTML
+                                formProcesso.querySelector('#ano-modal').value = data.ano; 
+                                formProcesso.querySelector('#mes-modal').value = data.mes;
+                                formProcesso.querySelector('#valor_causa').value = data.valor_causa.replace('.', ',');
+                                formProcesso.querySelector('#materia').value = data.materia;
+                                formProcesso.querySelector('#central_custo').value = data.central_custo;
+                                formProcesso.querySelector('#sentenca_1_instancia').value = data.sentenca_1_instancia;
+                                formProcesso.querySelector('#recurso').value = data.recurso;
+                                formProcesso.querySelector('#despesas_processuais_1').value = data.despesas_processuais_1.replace('.', ',');
+                                formProcesso.querySelector('#despesas_processuais_2').value = data.despesas_processuais_2.replace('.', ',');
+                                formProcesso.querySelector('#valor_pago').value = data.valor_pago.replace('.', ',');
+                                formProcesso.querySelector('#economia').value = data.economia.replace('.', ',');
+                                openModal('Editar Processo');
+                            } else {
+                                Swal.fire('Erro!', 'Não foi possível encontrar o processo.', 'error');
+                            }
+                        });
+                }
+
+                // Botão EXCLUIR
+                if (btnDelete) {
+                    const id = btnDelete.dataset.id;
+                    Swal.fire({
+                        title: 'Tem certeza?',
+                        text: "Você não poderá reverter esta ação!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Sim, excluir!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const formData = new FormData();
+                            formData.append('action', 'excluir_processo');
+                            formData.append('id', id);
+                            fetch('processos_detalhados.php', { method: 'POST', body: formData })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.status === 'success') {
+                                        Swal.fire('Excluído!', data.message, 'success').then(() => window.location.reload());
+                                    } else {
+                                        Swal.fire('Erro!', data.message, 'error');
+                                    }
+                                });
                         }
                     });
+                }
+            });
+        } // Fim if(tableBody)
+
+        if (formProcesso) {
+            formProcesso.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                fetch('processos_detalhados.php', { method: 'POST', body: formData })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            closeModal();
+                            Swal.fire({ icon: 'success', title: 'Sucesso!', text: data.message, timer: 2000, showConfirmButton: false })
+                                .then(() => window.location.reload());
+                        } else {
+                            Swal.fire('Erro!', data.message, 'error');
+                        }
+                    });
+            });
+        } // Fim if(formProcesso)
+
+
+        // ==========================================================
+        // PARTE 2: LÓGICA DO TEMA (DO ARQUIVO "AGORA")
+        // ==========================================================
+
+        function atualizarTemaTituloPrincipal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const el = document.getElementById('main-page-title');
+            const cor = isDarkMode ? '#E5E7EB' : '#1F2937'; // gray-200 / gray-800
+            if (el) el.style.color = cor;
+        }
+
+        // Target 1: Filtro
+        function atualizarTemaFiltro() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const card = document.getElementById('filtro-card');
+            const buscaLabel = document.getElementById('busca-label');
+            const buscaInput = document.getElementById('busca');
+            const anoLabel = document.getElementById('ano-label');
+            const anoSelect = document.getElementById('ano-filtro');
+            const btnLimpar = document.getElementById('btn-limpar-filtro');
+
+            const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
+            const corTextoLabel = isDarkMode ? '#A0AEC0' : '#374151'; // gray-400 / gray-700
+            const corFundoInput = isDarkMode ? '#4A5568' : '#FFFFFF';
+            const corTextoInput = isDarkMode ? '#E2E8F0' : '#111827'; // gray-200 / gray-900
+            const corBordaInput = isDarkMode ? '#6B7280' : '#D1D5DB'; // gray-500 / gray-300
+            
+            // Botão Limpar
+            const corFundoBtnLimpar = isDarkMode ? '#4A5568' : '#FFFFFF';
+            const corTextoBtnLimpar = isDarkMode ? '#E2E8F0' : '#374151'; // gray-200 / gray-700
+            const corBordaBtnLimpar = isDarkMode ? '#6B7280' : '#D1D5DB'; // gray-500 / gray-300
+            const corFundoHoverBtnLimpar = isDarkMode ? '#374151' : '#F9FAFB'; // gray-700 / gray-50
+
+            if (card) card.style.backgroundColor = corFundoCard;
+            if (buscaLabel) buscaLabel.style.color = corTextoLabel;
+            if (anoLabel) anoLabel.style.color = corTextoLabel;
+            
+            [buscaInput, anoSelect].forEach(el => {
+                if (el) {
+                    el.style.backgroundColor = corFundoInput;
+                    el.style.color = corTextoInput;
+                    el.style.borderColor = corBordaInput;
+                }
+            });
+
+            if(btnLimpar) {
+                btnLimpar.style.backgroundColor = corFundoBtnLimpar;
+                btnLimpar.style.color = corTextoBtnLimpar;
+                btnLimpar.style.borderColor = corBordaBtnLimpar;
+                // Hover (melhor via CSS, mas funciona)
+                btnLimpar.onmouseover = () => btnLimpar.style.backgroundColor = corFundoHoverBtnLimpar;
+                btnLimpar.onmouseout = () => btnLimpar.style.backgroundColor = corFundoBtnLimpar;
+            }
+        }
+        
+        // Target 2, 4: Tabela (Hover e Fontes)
+        function atualizarTemaTabela() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const card = document.getElementById('table-card');
+            const header = document.getElementById('table-header');
+            const allRows = document.querySelectorAll('#table-body tr');
+
+            const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
+            const corFundoHeader = isDarkMode ? '#4A5568' : '#F9FAFB'; // gray-600 / gray-50
+            const corTextoHeader = isDarkMode ? '#A0AEC0' : '#374151'; // gray-400 / gray-700
+            const corBordaRow = isDarkMode ? '#4A5568' : '#E5E7EB';     // gray-600 / gray-200
+            const corTextoProcesso = isDarkMode ? '#FFFFFF' : '#111827'; // white / gray-900 (font-medium)
+            const corTextoNormal = isDarkMode ? '#CBD5E0' : '#374151';   // gray-300 / gray-700 (Autor, Data, Valor)
+            const corTextoFallback = isDarkMode ? '#A0AEC0' : '#6B7280';// gray-400 / gray-500 ("Nenhum processo")
+            
+            const corFundoRowNormal = 'transparent';
+            const corFundoRowHover = isDarkMode ? '#374151' : '#F9FAFB'; // gray-700 / gray-50
+
+            if (card) card.style.backgroundColor = corFundoCard;
+            if (header) {
+                header.style.backgroundColor = corFundoHeader;
+                header.style.color = corTextoHeader;
             }
 
-            if (btnDelete) {
-                const id = btnDelete.dataset.id;
-                Swal.fire({
-                    title: 'Tem certeza?',
-                    text: "Você não poderá reverter esta ação!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Sim, excluir!',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const formData = new FormData();
-                        formData.append('action', 'excluir_processo');
-                        formData.append('id', id);
-                        fetch('processos_detalhados.php', { method: 'POST', body: formData })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.status === 'success') {
-                                    Swal.fire('Excluído!', data.message, 'success').then(() => window.location.reload());
-                                } else {
-                                    Swal.fire('Erro!', data.message, 'error');
-                                }
-                            });
+            if (allRows.length > 0) {
+                allRows.forEach(row => {
+                    const fallbackCell = row.querySelector('td[colspan="5"]');
+                    if (fallbackCell) {
+                        row.style.border = 'none';
+                        fallbackCell.style.color = corTextoFallback;
+                        return; // Pula para a próxima linha
                     }
+                    
+                    row.style.borderColor = corBordaRow; 
+                    row.style.backgroundColor = corFundoRowNormal; // Reseta o fundo
+
+                    // Aplica hover na LINHA INTEIRA
+                    row.addEventListener('mouseenter', () => { row.style.backgroundColor = corFundoRowHover; });
+                    row.addEventListener('mouseleave', () => { row.style.backgroundColor = corFundoRowNormal; });
+
+                    const tds = row.querySelectorAll('td');
+                    tds.forEach((td, index) => {
+                        if (index === 0) td.style.color = corTextoProcesso; // Coluna Nº Processo
+                        else if (index >= 1 && index <= 3) td.style.color = corTextoNormal; // Autor, Data, Valor
+                    });
                 });
+            }
+        }
+        
+        // Target 3: Modal "Adicionar/Editar Registro"
+        function atualizarTemaModal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const modal = document.getElementById('modal-processo'); // ID correto do modal
+            if (!modal) return; // Se o modal não existir, para a função
+
+            const modalContent = document.getElementById('modal-content');
+            const modalHeader = document.getElementById('modal-header');
+            const modalTitle = document.getElementById('modal-title');
+            const closeButton = modal.querySelector('.close-button'); 
+            const modalBody = document.getElementById('modal-body');
+            const modalFooter = document.getElementById('modal-footer');
+            const labels = modal.querySelectorAll('label'); 
+            const formControls = modal.querySelectorAll('.form-control'); 
+
+            const corFundoModalContent = isDarkMode ? '#374151' : '#fefefe'; // gray-700 / branco
+            const corFundoHeaderFooter = isDarkMode ? '#2D3748' : '#f9fafb'; // gray-800 / gray-50
+            const corBorda = isDarkMode ? '#4A5568' : '#e5e7eb';           // gray-600 / gray-200
+            const corTextoTitulo = isDarkMode ? '#FFFFFF' : '#111827';       // white / gray-900
+            const corTextoLabel = isDarkMode ? '#D1D5DB' : '#374151';       // gray-300 / gray-700
+            const corCloseButton = isDarkMode ? '#9CA3AF' : '#9ca3af';     // gray-400 / gray-400
+            const corCloseButtonHover = isDarkMode ? '#FFFFFF' : '#111827';  // white / gray-900
+            const corFundoInput = isDarkMode ? '#4A5568' : '#fff';         // gray-600 / white
+            const corTextoInput = isDarkMode ? '#E5E7EB' : '#111827';       // gray-200 / gray-900
+            const corBordaInput = isDarkMode ? '#6B7280' : '#d1d5db';     // gray-500 / gray-300
+            const corFundoReadonly = isDarkMode ? '#374151' : '#f3f4f6';   // gray-700 / gray-100
+
+            if(modalContent) modalContent.style.backgroundColor = corFundoModalContent;
+            if(modalHeader) {
+                modalHeader.style.borderBottomColor = corBorda;
+                modalHeader.style.backgroundColor = corFundoHeaderFooter; // Adicionado
+            }
+            if(modalTitle) modalTitle.style.color = corTextoTitulo;
+            if(closeButton) {
+                closeButton.style.color = corCloseButton;
+                closeButton.onmouseover = () => closeButton.style.color = corCloseButtonHover;
+                closeButton.onmouseout = () => closeButton.style.color = corCloseButton;
+            }
+            if(modalBody) {
+                modalBody.style.backgroundColor = corFundoModalContent;
+            }
+            if(modalFooter) {
+                modalFooter.style.backgroundColor = corFundoHeaderFooter;
+                modalFooter.style.borderTopColor = corBorda;
+            }
+            labels.forEach(label => label.style.color = corTextoLabel);
+            formControls.forEach(control => {
+                control.style.backgroundColor = control.readOnly ? corFundoReadonly : corFundoInput;
+                control.style.color = corTextoInput;
+                control.style.borderColor = corBordaInput;
+            });
+        }
+
+        // Target 5: Paginação
+        function atualizarTemaPaginacao() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const wrapper = document.getElementById('paginacao-wrapper');
+            if (!wrapper) return; 
+
+            const links = wrapper.querySelectorAll('a');
+            const disabledSpans = wrapper.querySelectorAll('.disabled');
+            
+            const corBorda = isDarkMode ? '#4A5568' : '#ddd';
+            const corTextoLink = isDarkMode ? '#A0AEC0' : 'var(--cor-primaria)';
+            const corTextoDisabled = isDarkMode ? '#718096' : '#aaa';
+            const corFundoDisabled = isDarkMode ? '#2D3748' : '#f9f9f9';
+            const corTextoActive = '#FFFFFF';
+            const corFundoActive = 'var(--cor-primaria)';
+            const corFundoHover = isDarkMode ? '#374151' : '#f1f1f1'; // gray-700 / gray-100
+            
+            links.forEach(link => {
+                if (link.classList.contains('active')) {
+                    link.style.backgroundColor = corFundoActive;
+                    link.style.color = corTextoActive;
+                    link.style.borderColor = corFundoActive;
+                } else {
+                    link.style.color = corTextoLink;
+                    link.style.borderColor = corBorda;
+                    link.style.backgroundColor = 'transparent';
+                    link.onmouseover = () => link.style.backgroundColor = corFundoHover;
+                    link.onmouseout = () => link.style.backgroundColor = 'transparent';
+                }
+            });
+            disabledSpans.forEach(span => {
+                span.style.color = corTextoDisabled;
+                span.style.backgroundColor = corFundoDisabled;
+                span.style.borderColor = corBorda;
+            });
+        }
+
+        // --- 5. EXECUÇÃO E OBSERVADOR ---
+
+        function atualizarTudo() {
+            atualizarTemaTituloPrincipal(); 
+            atualizarTemaFiltro();
+            atualizarTemaTabela();
+            atualizarTemaModal(); 
+            atualizarTemaPaginacao(); 
+        }
+
+        // 1. Roda tudo no carregamento inicial
+        atualizarTudo();
+
+        // 2. Cria o observador para mudar o tema
+        const observer = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    atualizarTudo();
+                }
             }
         });
 
-        formProcesso.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            fetch('processos_detalhados.php', { method: 'POST', body: formData })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        closeModal();
-                        Swal.fire({ icon: 'success', title: 'Sucesso!', text: data.message, timer: 2000, showConfirmButton: false })
-                            .then(() => window.location.reload());
-                    } else {
-                        Swal.fire('Erro!', data.message, 'error');
-                    }
-                });
-        });
+        // 3. Inicia o observador
+        observer.observe(document.documentElement, { attributes: true });
+
+        // Constante BASE_URL (movida para dentro do DOMContentLoaded)
+        const BASE_URL = 'http://localhost/juridico'; 
     });
-    const BASE_URL = 'http://localhost/juridico'; 
     </script>
 </body>
 </html>

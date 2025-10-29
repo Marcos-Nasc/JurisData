@@ -448,6 +448,11 @@ html {
     box-shadow: 0 0 0 0.1875rem rgba(var(--cor-primaria-rgb), 0.2); /* 3px -> 0.1875rem */
 }
 
+tr {
+    border-bottom: 1px solid var(--cor-borda);
+
+}
+
 /* Estilos para mensagens de feedback */
 .alert {
     padding: 1rem;

@@ -230,8 +230,8 @@ try {
         <?php require_once '../includes/sidebar.php'; ?>
         <main class="main-content">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold text-gray-800">Gestão de Totais Mensais</h1>
-                <div class="flex gap-2">
+                <h1 id="main-page-title" class="text-2xl font-bold text-gray-800">Gestão de Totais Mensais</h1>
+                <div id="action-buttons-group" class="flex gap-2">
                     <button id="btn-adicionar-manual" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center shadow-sm">
                         <i class="fas fa-plus mr-2"></i>Adicionar Registro
                     </button>
@@ -244,9 +244,9 @@ try {
                 </div>
             </div>
 
-            <div class="bg-white p-4 rounded-lg shadow mb-6">
+            <div id="filtro-card" class="bg-white p-4 rounded-lg shadow mb-6">
                 <form action="" method="GET" class="flex items-center gap-4">
-                    <label for="ano-filtro" class="text-sm font-medium text-gray-700">Filtrar por Ano:</label>
+                    <label id="filtro-label" for="ano-filtro" class="text-sm font-medium text-gray-700">Filtrar por Ano:</label>
                     <select name="ano" id="ano-filtro" class="p-2 border-gray-300 rounded-md shadow-sm">
                         <?php foreach($anos_disponiveis as $ano_opcao): ?>
                             <option value="<?php echo $ano_opcao; ?>" <?php echo ($ano_opcao == $ano_selecionado) ? 'selected' : ''; ?>><?php echo $ano_opcao; ?></option>
@@ -256,9 +256,9 @@ try {
                 </form>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
+            <div id="table-card" class="bg-white p-6 rounded-lg shadow overflow-x-auto">
                 <table id="pivot-table" class="w-full text-sm text-left table-auto">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <thead id="table-header" class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th class="py-3 px-4">Varas</th>
                             <?php foreach ($meses_nomes_short as $nome_mes): ?>
@@ -267,12 +267,12 @@ try {
                             <th class="py-3 px-4 text-center">Ações</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="table-body">
                         <?php if (empty($tipos_de_vara)): ?>
                             <tr><td colspan="14" class="text-center py-4">Nenhum dado encontrado para o ano de <?php echo htmlspecialchars($ano_selecionado); ?>.</td></tr>
                         <?php else: ?>
                             <?php foreach ($tipos_de_vara as $tipo_vara): ?>
-                            <tr class="border-b hover:bg-gray-50">
+                            <tr class="border-b">
                                 <td class="py-3 px-4 font-medium text-gray-900"><?php echo htmlspecialchars($tipo_vara); ?></td>
                                 <?php for ($mes = 1; $mes <= 12; $mes++): 
                                     $quantidade = $dados_pivotados[$tipo_vara][$mes] ?? 0;
@@ -292,17 +292,18 @@ try {
                     </tbody>
                 </table>
             </div>
-        </main>
+            
+             </main>
     </div>
 
     <div class="modal" id="modal-adicao-manual">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div id="modal-content" class="modal-content">
+            <div id="modal-header" class="modal-header">
                 <h2 id="modal-title">Adicionar/Editar Registro</h2>
                 <button class="close-button">&times;</button>
             </div>
             <form id="form-manual">
-                <div class="modal-body">
+                <div id="modal-body" class="modal-body">
                     <input type="hidden" name="action" value="salvar_manual">
                     <div class="form-group">
                         <label for="ano">Ano:</label>
@@ -329,38 +330,53 @@ try {
                         <input type="number" id="quantidade" name="quantidade" class="form-control" value="0" min="0" required>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div id="modal-footer" class="modal-footer">
                      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Salvar Registro</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="../js/script.js"></script>
+    <script src="../js/app.js"></script> 
+    <script src="../js/mobile.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('modal-adicao-manual');
-        const modalTitle = document.getElementById('modal-title');
-        const btnOpen = document.getElementById('btn-adicionar-manual');
-        const btnClose = modal.querySelector('.close-button');
-        const formManual = document.getElementById('form-manual');
-        const pivotTable = document.getElementById('pivot-table');
-        const mesesNomes = ["", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        
-        const mesSelectContainer = document.getElementById('mes-select-container');
-        const mesTextContainer = document.getElementById('mes-text-container');
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // ==========================================================
+    // PARTE 1: LÓGICA DO MODAL (DO ARQUIVO ANTIGO)
+    // ==========================================================
 
-        const openModal = (title) => {
-            modalTitle.textContent = title;
-            modal.style.display = 'flex'; // Changed to flex for centering
-        };
-        const closeModal = () => { modal.style.display = 'none'; formManual.reset(); };
+    const modal = document.getElementById('modal-adicao-manual');
+    const modalTitle = document.getElementById('modal-title');
+    const btnOpen = document.getElementById('btn-adicionar-manual');
+    // Corrigido: Busca o botão de fechar dentro do modal
+    const btnClose = modal.querySelector('.close-button'); 
+    const formManual = document.getElementById('form-manual');
+    const pivotTable = document.getElementById('pivot-table');
+    const mesesNomes = ["", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    
+    const mesSelectContainer = document.getElementById('mes-select-container');
+    const mesTextContainer = document.getElementById('mes-text-container');
 
+    const openModal = (title) => {
+        modalTitle.textContent = title;
+        modal.style.display = 'flex'; 
+        // BOA PRÁTICA: Atualiza o tema do modal sempre que ele abrir
+        if(typeof atualizarTemaModal === 'function') {
+            atualizarTemaModal();
+        }
+    };
+    const closeModal = () => { modal.style.display = 'none'; formManual.reset(); };
+
+    // Event Listeners do Modal
+    if(btnClose) {
         btnClose.addEventListener('click', closeModal);
-        window.addEventListener('click', (event) => { if (event.target == modal) closeModal(); });
+    }
+    window.addEventListener('click', (event) => { if (event.target == modal) closeModal(); });
 
-        // Abrir modal para ADICIONAR um novo TIPO DE VARA
+    // Abrir modal para ADICIONAR um novo TIPO DE VARA
+    if(btnOpen) {
         btnOpen.addEventListener('click', () => {
             formManual.reset();
             formManual.querySelector('#ano').value = document.getElementById('ano-filtro').value;
@@ -372,14 +388,16 @@ try {
 
             openModal('Adicionar Novo Registro');
         });
+    }
 
-        // Lidar com cliques na tabela (células e botões de exclusão)
+    // Lidar com cliques na tabela (EDITAR e EXCLUIR)
+    if(pivotTable) {
         pivotTable.addEventListener('click', function(event) {
             const target = event.target;
             const editableCell = target.closest('.editable-cell');
             const deleteButton = target.closest('.btn-delete-vara');
 
-            // Clicou em uma CÉLULA EDITÁVEL
+            // Clicou em uma CÉLULA EDITÁVEL (Abrir Modal para Editar)
             if (editableCell) {
                 const ano = editableCell.dataset.ano;
                 const mes = editableCell.dataset.mes;
@@ -435,8 +453,10 @@ try {
                 });
             }
         });
+    }
 
-        // Lidar com o SUBMIT do formulário (para criar e editar)
+    // Lidar com o SUBMIT do formulário (Salvar)
+    if(formManual) {
         formManual.addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
@@ -453,8 +473,181 @@ try {
                     }
                 });
         });
+    }
+
+    // ==========================================================
+    // PARTE 2: LÓGICA DO TEMA (DO ARQUIVO NOVO)
+    // ==========================================================
+
+    function atualizarTemaTituloPrincipal() {
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        const el = document.getElementById('main-page-title');
+        const cor = isDarkMode ? '#E5E7EB' : '#1F2937'; // gray-200 / gray-800
+        if (el) el.style.color = cor;
+    }
+
+    // Target 1: Filtro
+    function atualizarTemaFiltro() {
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        const card = document.getElementById('filtro-card');
+        const label = document.getElementById('filtro-label'); // Label do filtro principal
+        const select = document.getElementById('ano-filtro'); // Select do filtro principal
+
+        const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
+        const corTextoLabel = isDarkMode ? '#A0AEC0' : '#374151'; // gray-400 / gray-700
+        const corFundoSelect = isDarkMode ? '#4A5568' : '#FFFFFF';
+        const corTextoSelect = isDarkMode ? '#E2E8F0' : '#111827'; // gray-200 / gray-900
+        const corBordaSelect = isDarkMode ? '#4A5568' : '#D1D5DB'; // gray-600 / gray-300
+
+        if (card) card.style.backgroundColor = corFundoCard;
+        if (label) label.style.color = corTextoLabel;
+        if (select) {
+            select.style.backgroundColor = corFundoSelect;
+            select.style.color = corTextoSelect;
+            select.style.borderColor = corBordaSelect;
+        }
+    }
+    
+    // Target 2 e 3: Tabela (fontes e hover)
+    function atualizarTemaTabela() {
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        const card = document.getElementById('table-card');
+        const header = document.getElementById('table-header');
+        const allRows = document.querySelectorAll('#table-body tr');
+
+        const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
+        const corFundoHeader = isDarkMode ? '#4A5568' : '#F9FAFB'; // gray-600 / gray-50
+        const corTextoHeader = isDarkMode ? '#A0AEC0' : '#374151'; // gray-400 / gray-700
+        const corBordaRow = isDarkMode ? '#4A5568' : '#E5E7EB';     // gray-600 / gray-200
+        const corTextoVara = isDarkMode ? '#FFFFFF' : '#111827';     // white / gray-900 (font-medium)
+        const corTextoMeses = isDarkMode ? '#CBD5E0' : '#374151';   // gray-300 / gray-700 (text-center)
+        const corTextoFallback = isDarkMode ? '#A0AEC0' : '#6B7280'; // gray-400 / gray-500 ("Nenhum dado")
+        
+        const corFundoRowNormal = 'transparent';
+        const corFundoRowHover = isDarkMode ? '#374151' : '#F3F4F6'; // gray-700 / gray-100 (ajustado de gray-50)
+        const corHoverEditableCell = isDarkMode ? '#4A5568' : '#EFF6FF'; // gray-600 / blue-50 (do seu CSS)
+
+        if (card) card.style.backgroundColor = corFundoCard;
+        if (header) {
+            header.style.backgroundColor = corFundoHeader;
+            header.style.color = corTextoHeader;
+        }
+
+        if (allRows.length > 0) {
+            allRows.forEach(row => {
+                const fallbackCell = row.querySelector('td[colspan="14"]');
+                if (fallbackCell) {
+                    row.style.border = 'none';
+                    fallbackCell.style.color = corTextoFallback;
+                    return; // Pula para a próxima linha
+                }
+                
+                row.style.borderColor = corBordaRow; 
+                row.style.backgroundColor = corFundoRowNormal; // Reseta o fundo
+
+                // Aplica hover na LINHA INTEIRA
+                row.addEventListener('mouseenter', () => { row.style.backgroundColor = corFundoRowHover; });
+                row.addEventListener('mouseleave', () => { row.style.backgroundColor = corFundoRowNormal; });
+
+                const tds = row.querySelectorAll('td');
+                tds.forEach((td, index) => {
+                    // Coluna Vara
+                    if (index === 0) td.style.color = corTextoVara;
+                    // Colunas Meses (1 a 12)
+                    else if (index >= 1 && index <= 12) {
+                        td.style.color = corTextoMeses;
+                        // Aplica hover específico para células editáveis
+                        if(td.classList.contains('editable-cell')) {
+                            td.addEventListener('mouseenter', () => { td.style.backgroundColor = corHoverEditableCell; });
+                            td.addEventListener('mouseleave', () => { td.style.backgroundColor = 'transparent'; }); // Remove o fundo da célula ao sair
+                        }
+                    }
+                });
+            });
+        }
+    }
+    
+    // Target 4: Modal "Adicionar Registro"
+    function atualizarTemaModal() {
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        const modal = document.getElementById('modal-adicao-manual');
+        if (!modal) return; // Se o modal não existir, não faz nada
+        
+        const modalContent = document.getElementById('modal-content');
+        const modalHeader = document.getElementById('modal-header');
+        const modalTitle = document.getElementById('modal-title');
+        const closeButton = modal.querySelector('.close-button');
+        const modalBody = document.getElementById('modal-body');
+        const modalFooter = document.getElementById('modal-footer');
+        const labels = modal.querySelectorAll('label');
+        const formControls = modal.querySelectorAll('.form-control');
+
+        const corFundoModalContent = isDarkMode ? '#374151' : '#fefefe'; // gray-700 / branco
+        const corFundoHeaderFooter = isDarkMode ? '#2D3748' : '#f9fafb'; // gray-800 / gray-50
+        const corBorda = isDarkMode ? '#4A5568' : '#e5e7eb';           // gray-600 / gray-200
+        const corTextoTitulo = isDarkMode ? '#FFFFFF' : '#111827';       // white / gray-900
+        const corTextoLabel = isDarkMode ? '#D1D5DB' : '#374151';       // gray-300 / gray-700
+        const corCloseButton = isDarkMode ? '#9CA3AF' : '#9ca3af';     // gray-400 / gray-400
+        const corCloseButtonHover = isDarkMode ? '#FFFFFF' : '#111827';  // white / gray-900
+
+        const corFundoInput = isDarkMode ? '#4A5568' : '#fff';         // gray-600 / white
+        const corTextoInput = isDarkMode ? '#E5E7EB' : '#111827';       // gray-200 / gray-900
+        const corBordaInput = isDarkMode ? '#6B7280' : '#d1d5db';     // gray-500 / gray-300
+        const corFundoReadonly = isDarkMode ? '#374151' : '#f3f4f6';   // gray-700 / gray-100
+
+        if(modalContent) modalContent.style.backgroundColor = corFundoModalContent;
+        if(modalHeader) {
+            modalHeader.style.borderBottomColor = corBorda;
+            modalHeader.style.backgroundColor = corFundoHeaderFooter; // Adicionado
+        }
+        if(modalTitle) modalTitle.style.color = corTextoTitulo;
+        if(closeButton) {
+            closeButton.style.color = corCloseButton;
+            closeButton.onmouseover = () => closeButton.style.color = corCloseButtonHover;
+            closeButton.onmouseout = () => closeButton.style.color = corCloseButton;
+        }
+        if(modalBody) {
+             modalBody.style.backgroundColor = corFundoModalContent;
+        }
+        if(modalFooter) {
+            modalFooter.style.backgroundColor = corFundoHeaderFooter;
+            modalFooter.style.borderTopColor = corBorda;
+        }
+        labels.forEach(label => label.style.color = corTextoLabel);
+        formControls.forEach(control => {
+            control.style.backgroundColor = control.readOnly ? corFundoReadonly : corFundoInput;
+            control.style.color = corTextoInput;
+            control.style.borderColor = corBordaInput;
+        });
+    }
+
+    // --- 5. EXECUÇÃO E OBSERVADOR ---
+
+    function atualizarTudo() {
+        atualizarTemaTituloPrincipal(); 
+        atualizarTemaFiltro();
+        atualizarTemaTabela();
+        atualizarTemaModal(); 
+    }
+
+    // 1. Roda tudo no carregamento inicial
+    atualizarTudo();
+
+    // 2. Cria o observador para mudar o tema
+    const observer = new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                atualizarTudo();
+            }
+        }
     });
+
+    // 3. Inicia o observador
+    observer.observe(document.documentElement, { attributes: true });
+
+    // Verifique se esta URL base está correta
     const BASE_URL = 'http://localhost/juridico'; 
-    </script>
+});
+</script>
 </body>
 </html>

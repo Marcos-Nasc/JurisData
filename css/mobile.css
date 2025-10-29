@@ -161,31 +161,48 @@
         position: relative;
     }
 
-    /* --- 8. CABEÇALHO / BEM-VINDO / FILTRO --- */
-    .page-header {
-        display: flex;
-        justify-content: space-between;
+    /* --- 8. CABEÇALHO / BEM-VINDO / FILTRO (CORRIGIDO COM GRID) --- */
+    
+    /* ✅ ALTERAÇÃO 1: Trocamos flexbox por CSS Grid */
+    /* Isso nos permite controlar as linhas E colunas */
+    .dashboard-header-container {
+        display: grid; /* MUDANÇA: de 'flex' para 'grid' */
+        grid-template-columns: 1fr auto; /* Coluna 1 (título) flexível, Coluna 2 (filtro) automática */
+        grid-template-areas: 
+            "title filter"   /* Linha 1: Título | Filtro */
+            "subtitle subtitle"; /* Linha 2: Subtítulo (ocupa as 2 colunas) */
         align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 12px;
+        gap: 4px 12px; /* 4px de espaço vertical, 12px horizontal */
+    }
+    
+    /* ✅ ALTERAÇÃO 2: Faz o container .page-header "sumir" */
+    /* 'display: contents' faz com que os filhos (h1, subtitle) 
+       se tornem itens diretos do grid do pai (.dashboard-header-container) */
+    .page-header {
+        display: contents; /* MUDANÇA CHAVE */
     }
 
+    /* ✅ ALTERAÇÃO 3: Posiciona o Título no grid */
     .page-header h1 {
+        grid-area: title; /* Posição: Linha 1, Coluna 1 */
         font-size: 1.6rem;
         font-weight: 700;
         color: var(--cor-texto-principal);
         margin: 0;
     }
 
+    /* ✅ ALTERAção 4: Posiciona o Subtítulo no grid */
     .page-subtitle {
+        grid-area: subtitle; /* Posição: Linha 2, Coluna 1 (span 2) */
         display: block;
         font-size: 0.9rem;
         color: var(--cor-texto-secundario);
-        margin-bottom: 16px;
+        margin-bottom: 16px; /* Mantém a margem inferior para separar do conteúdo */
     }
 
+    /* ✅ ALTERAÇÃO 5: Posiciona o Filtro no grid */
     .page-filter-group {
+        grid-area: filter; /* Posição: Linha 1, Coluna 2 */
         display: flex;
         align-items: center;
         gap: 8px;
@@ -205,12 +222,16 @@
         background-position: right 8px center;
         padding-right: 28px;
     }
-
-    /* 🔥 Reexibe o filtro e o bem-vindo */
-    #filtro-card,
+    
+    /* Mostra o filtro mobile e o subtítulo */
     .filtro-header-mobile,
     .page-subtitle {
         display: block !important;
+    }
+    
+    /* Esconde o filtro de desktop (o que tem o botão) */
+    #filtro-card {
+        display: none !important;
     }
 
     /* --- 9. TABELAS EM FORMATO DE CARDS --- */

@@ -113,11 +113,11 @@ try {
         <?php require_once '../includes/sidebar.php'; ?>
         <main class="main-content">
 
-            <h1 class="text-2xl font-bold text-gray-800 mb-6">Relatório de Provisão de Riscos</h1>
+            <h1 id="main-page-title" class="text-2xl font-bold text-gray-800 mb-6">Relatório de Provisão de Riscos</h1>
 
-            <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
+            <div id="filtro-card" class="bg-white p-4 rounded-lg shadow-sm mb-6">
                 <form action="" method="GET" class="flex items-center gap-4">
-                    <label for="ano" class="text-sm font-medium text-gray-700">Filtrar por Ano:</label>
+                    <label id="filtro-label" for="ano" class="text-sm font-medium text-gray-700">Filtrar por Ano:</label>
                     <select name="ano" id="ano" class="p-2 border-gray-300 rounded-md shadow-sm">
                         <?php foreach($anos_disponiveis as $ano_opcao): ?>
                             <option value="<?php echo $ano_opcao; ?>" <?php echo ($ano_opcao == $ano_selecionado) ? 'selected' : ''; ?>><?php echo $ano_opcao; ?></option>
@@ -127,25 +127,25 @@ try {
                 </form>
             </div>
 
-            <div class="card-provisao">
-                <h2 class="titulo">
+            <div id="card-provisao" class="card-provisao">
+                <h2 id="card-provisao-titulo" class="titulo">
                     Risco Total Provisionado (<?php echo $ano_selecionado; ?>)
                 </h2>
-                <p class="valor">
+                <p id="card-provisao-valor" class="valor">
                     R$ <?php echo number_format($total_provisionado, 2, ',', '.'); ?>
                 </p>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8">
-                <h3 class="font-semibold text-gray-800 mb-4">Evolução do Risco Total em <?php echo $ano_selecionado; ?></h3>
+            <div id="graph-card" class="bg-white p-6 rounded-xl shadow-md mb-8">
+                <h3 id="graph-card-titulo" class="font-semibold text-gray-800 mb-4">Evolução do Risco Total em <?php echo $ano_selecionado; ?></h3>
                 <div class="relative h-80">
                     <canvas id="graficoLinhaRisco"></canvas>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
+            <div id="table-card" class="bg-white p-6 rounded-lg shadow overflow-x-auto">
                 <table class="w-full text-sm text-left text-gray-600">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                    <thead id="table-header" class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
                         <tr>
                             <th class="py-3 px-6 font-semibold">Nº do Processo</th>
                             <th class="py-3 px-6 font-semibold">Autor</th>
@@ -153,14 +153,14 @@ try {
                             <th class="py-3 px-6 font-semibold text-right">Valor da Causa</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="table-body">
                         <?php if (empty($dados_tabela)): ?>
                             <tr>
                                 <td colspan="4" class="text-center py-10 text-gray-500">Nenhum processo encontrado para o ano de <?php echo $ano_selecionado; ?>.</td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($dados_tabela as $linha): ?>
-                            <tr class="border-b hover:bg-gray-50">
+                            <tr class="border-b">
                                 <td class="py-4 px-6 font-medium text-gray-900"><?php echo htmlspecialchars($linha['numero_processo']); ?></td>
                                 <td class="py-4 px-6"><?php echo htmlspecialchars($linha['autor']); ?></td>
                                 <td class="py-4 px-6"><?php echo htmlspecialchars($linha['materia']); ?></td>
@@ -173,7 +173,7 @@ try {
             </div>
 
             <?php if ($total_paginas > 1): ?>
-            <div class="pagination">
+            <div id="paginacao-wrapper" class="pagination">
                 <?php if ($pagina_selecionada > 1): ?>
                     <a href="?page=<?php echo $pagina_selecionada - 1; ?>&ano=<?php echo $ano_selecionado; ?>">Anterior</a>
                 <?php endif; ?>
@@ -184,11 +184,9 @@ try {
                     echo '<a href="?page=1&ano='.$ano_selecionado.'">1</a>';
                     echo '<span class="disabled">...</span>';
                 }
-
                 for ($i = max(1, $pagina_selecionada - $window); $i <= min($total_paginas, $pagina_selecionada + $window); $i++): ?>
                     <a href="?page=<?php echo $i; ?>&ano=<?php echo $ano_selecionado; ?>" class="<?php echo ($i == $pagina_selecionada) ? 'active' : ''; ?>"><?php echo $i; ?></a>
                 <?php endfor; ?>
-
                 <?php
                 if ($pagina_selecionada < $total_paginas - $window - 1) {
                     echo '<span class="disabled">...</span>';
@@ -204,43 +202,259 @@ try {
 
         </main>
     </div>
-    <script>
+    
+    <script src="../js/app.js"></script> <script src="../js/mobile.js"></script> <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Gráfico de Linha (Risco)
+        
+        // --- 1. INSTÂNCIAS E DADOS DO GRÁFICO ---
+        let graficoLinhaRisco = null;
         const ctxLineRisco = document.getElementById('graficoLinhaRisco').getContext('2d');
-        new Chart(ctxLineRisco, {
-            type: 'line',
-            data: {
-                labels: <?php echo $line_chart_labels; ?>,
-                datasets: [{
-                    label: 'Risco Mensal',
-                    data: <?php echo $line_chart_data; ?>,
-                    borderColor: '#dc2626',
-                    backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                    fill: true,
-                    tension: 0
-                }]
-            },
-            options: {
+        
+        // Dados do PHP
+        const chartLabels = <?php echo $line_chart_labels; ?>;
+        const chartData = <?php echo $line_chart_data; ?>;
+
+        // --- 2. FUNÇÕES DE OPÇÕES DO GRÁFICO ---
+        function getLineChartOptions() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const textColor = isDarkMode ? '#E5E7EB' : '#374151';
+            const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            
+            return {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: true }
+                    legend: { 
+                        display: true,
+                        labels: { color: textColor } // Cor da legenda
+                    }
                 },
                 scales: {
                     y: {
                         ticks: {
+                            color: textColor, // Cor dos labels do eixo Y
                             callback: function(value, index, values) {
+                                // Preserva sua formatação de moeda
                                 return 'R$ ' + value.toLocaleString('pt-BR');
                             }
-                        }
+                        },
+                        grid: { color: gridColor } // Cor das linhas do grid Y
+                    },
+                    x: {
+                         ticks: { color: textColor }, // Cor dos labels do eixo X
+                         grid: { display: false }
                     }
+                }
+            };
+        }
+
+        // --- 3. FUNÇÃO DE RENDERIZAÇÃO DO GRÁFICO ---
+        function renderLineChart() {
+            const options = getLineChartOptions();
+            const data = {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'Risco Mensal',
+                    data: chartData,
+                    borderColor: '#dc2626', // red-600
+                    backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                    fill: true,
+                    tension: 0.1
+                }]
+            };
+
+            if (graficoLinhaRisco) {
+                graficoLinhaRisco.options = options;
+                graficoLinhaRisco.update();
+            } else {
+                graficoLinhaRisco = new Chart(ctxLineRisco, { type: 'line', data: data, options: options });
+            }
+        }
+
+        // --- 4. FUNÇÕES DE ATUALIZAÇÃO DE TEMA (HTML) ---
+
+        function atualizarTemaTituloPrincipal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const el = document.getElementById('main-page-title');
+            const cor = isDarkMode ? '#E5E7EB' : '#374151'; // gray-200 / gray-800
+            if (el) el.style.color = cor;
+        }
+
+        function atualizarTemaFiltro() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const card = document.getElementById('filtro-card');
+            const label = document.getElementById('filtro-label');
+            const select = document.getElementById('ano');
+
+            const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
+            const corTextoLabel = isDarkMode ? '#A0AEC0' : '#374151';
+            const corFundoSelect = isDarkMode ? '#4A5568' : '#FFFFFF';
+            const corTextoSelect = isDarkMode ? '#E2E8F0' : '#111827';
+            const corBordaSelect = isDarkMode ? '#4A5568' : '#D1D5DB';
+
+            if (card) {
+                card.style.backgroundColor = corFundoCard;
+                if (label) label.style.color = corTextoLabel;
+                if (select) {
+                    select.style.backgroundColor = corFundoSelect;
+                    select.style.color = corTextoSelect;
+                    select.style.borderColor = corBordaSelect;
+                }
+            }
+        }
+        
+        // (Target 1: Card Risco Total)
+        function atualizarTemaCardProvisao() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const card = document.getElementById('card-provisao');
+            const titulo = document.getElementById('card-provisao-titulo');
+            const valor = document.getElementById('card-provisao-valor');
+
+            const corFundo = isDarkMode ? '#2D3748' : '#FFFFFF';
+            const corTitulo = isDarkMode ? '#A0AEC0' : '#a0a0a0'; // cinza claro / cinza (do seu CSS)
+            const corValor = isDarkMode ? '#f87171' : '#f13e3eff'; // red-400 / red (do seu CSS)
+            
+            if(card) {
+                card.style.backgroundColor = corFundo;
+                card.style.borderColor = corValor; // A borda usa a mesma cor do valor
+            }
+            if(titulo) titulo.style.color = corTitulo;
+            if(valor) valor.style.color = corValor;
+        }
+
+        // (Target 2: Título do card do gráfico)
+        function atualizarTemaGraphCard() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const card = document.getElementById('graph-card');
+            const titulo = document.getElementById('graph-card-titulo');
+            
+            const corFundo = isDarkMode ? '#2D3748' : '#FFFFFF';
+            const corTitulo = isDarkMode ? '#E5E7EB' : '#374151'; // gray-200 / gray-800
+
+            if(card) card.style.backgroundColor = corFundo;
+            if(titulo) titulo.style.color = corTitulo;
+        }
+
+        // (Target 3: Hover da tabela)
+        function atualizarTemaTabela() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const card = document.getElementById('table-card');
+            const header = document.getElementById('table-header');
+            const allRows = document.querySelectorAll('#table-body tr');
+
+            // Cores
+            const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
+            const corFundoHeader = isDarkMode ? '#4A5568' : '#F9FAFB';
+            const corTextoHeader = isDarkMode ? '#A0AEC0' : '#374151';
+            const corBordaRow = isDarkMode ? '#4A5568' : '#E5E7EB'; 
+            const corTextoPrincipal = isDarkMode ? '#CBD5E0' : '#374151'; 
+            const corTextoBold = isDarkMode ? '#FFFFFF' : '#111827';     
+            const corTextoFallback = isDarkMode ? '#A0AEC0' : '#6B7280'; 
+            
+            const corFundoRowNormal = 'transparent';
+            const corFundoRowHover = isDarkMode ? '#4A5568' : '#F9FAFB'; // bg-gray-600 / bg-gray-50
+
+            if (card) card.style.backgroundColor = corFundoCard;
+            if (header) {
+                header.style.backgroundColor = corFundoHeader;
+                header.style.color = corTextoHeader;
+            }
+
+            if (allRows.length > 0) {
+                allRows.forEach(row => {
+                    const fallbackCell = row.querySelector('td[colspan="4"]'); // Colspan desta tabela é 4
+                    if (fallbackCell) {
+                        row.style.border = 'none';
+                        fallbackCell.style.color = corTextoFallback;
+                        return;
+                    }
+                    
+                    row.style.borderColor = corBordaRow; 
+                    row.style.backgroundColor = corFundoRowNormal;
+
+                    row.addEventListener('mouseenter', () => { row.style.backgroundColor = corFundoRowHover; });
+                    row.addEventListener('mouseleave', () => { row.style.backgroundColor = corFundoRowNormal; });
+
+                    // Atualiza as cores dos textos (TD)
+                    const tds = row.querySelectorAll('td');
+                    tds.forEach((td, index) => {
+                        // Ignora a última coluna (Valor da Causa) que tem cor vermelha própria
+                        if (index === 3) return; 
+                        
+                        if (index === 0) { // Coluna "Nº Processo" (bold)
+                            td.style.color = corTextoBold;
+                        } else { // Colunas "Autor" e "Matéria"
+                            td.style.color = corTextoPrincipal;
+                        }
+                    });
+                });
+            }
+        }
+        
+        // (Target 4: Paginação)
+        function atualizarTemaPaginacao() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const links = document.querySelectorAll('#paginacao-wrapper a');
+            const disabledSpans = document.querySelectorAll('#paginacao-wrapper .disabled');
+            
+            const corBorda = isDarkMode ? '#4A5568' : '#ddd';
+            const corTextoLink = isDarkMode ? '#A0AEC0' : 'var(--cor-primaria)';
+            const corTextoDisabled = isDarkMode ? '#718096' : '#aaa';
+            const corFundoDisabled = isDarkMode ? '#2D3748' : '#f9f9f9';
+            const corTextoActive = '#FFFFFF';
+            const corFundoActive = 'var(--cor-primaria)';
+            
+            links.forEach(link => {
+                if (link.classList.contains('active')) {
+                    link.style.backgroundColor = corFundoActive;
+                    link.style.color = corTextoActive;
+                    link.style.borderColor = corFundoActive;
+                } else {
+                    link.style.color = corTextoLink;
+                    link.style.borderColor = corBorda;
+                    link.style.backgroundColor = 'transparent';
+                }
+            });
+            disabledSpans.forEach(span => {
+                span.style.color = corTextoDisabled;
+                span.style.backgroundColor = corFundoDisabled;
+                span.style.borderColor = corBorda;
+            });
+        }
+
+
+        // --- 5. EXECUÇÃO E OBSERVADOR ---
+
+        function atualizarTudo() {
+            renderLineChart(); // Atualiza o gráfico (com cores)
+            
+            // Atualiza o HTML
+            atualizarTemaTituloPrincipal(); 
+            atualizarTemaFiltro();
+            atualizarTemaCardProvisao();
+            atualizarTemaGraphCard();
+            atualizarTemaTabela();
+            atualizarTemaPaginacao();
+        }
+
+        // 1. Roda tudo no carregamento inicial
+        atualizarTudo();
+
+        // 2. Cria o observador para mudar o tema
+        const observer = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    atualizarTudo();
                 }
             }
         });
+
+        // 3. Inicia o observador
+        observer.observe(document.documentElement, { attributes: true });
+
+        // Verifique se esta URL base está correta para seu ambiente
+        const BASE_URL = 'http://localhost/juridico'; 
     });
-    const BASE_URL = 'http://localhost/juridico'; 
     </script>
-    <script src="../js/script.js"></script>
 </body>
 </html>

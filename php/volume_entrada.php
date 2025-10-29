@@ -82,12 +82,12 @@ $chart_outros_data = json_encode(array_column($dados_mensais, 'outros')); // Pre
     <div class="app-layout">
         <?php require_once '../includes/sidebar.php'; ?>
         <main class="main-content">
-            <h1 class="text-2xl font-bold text-gray-800 mb-6">Relatório de Volume de Entradas de Processos</h1>
+            <h1 id="main-page-title" class="text-2xl font-bold text-gray-800 mb-6">Relatório de Volume de Entradas de Processos</h1>
             
-            <div class="bg-white p-4 rounded-lg shadow mb-6">
+            <div id="filtro-card" class="bg-white p-4 rounded-lg shadow mb-6">
                 <form action="volume_entrada.php" method="GET" class="flex items-center gap-4">
                     <div>
-                        <label for="ano" class="block text-sm font-medium text-gray-700">Ano</label>
+                        <label id="filtro-label" for="ano" class="block text-sm font-medium text-gray-700">Ano</label>
                         <select name="ano" id="ano" class="p-2 border rounded-md">
                             <?php foreach($anos_disponiveis as $ano_opcao): ?>
                                 <option value="<?php echo $ano_opcao; ?>"<?php echo ($ano_opcao == $ano_selecionado) ? ' selected' : ''; ?>><?php echo $ano_opcao; ?></option>
@@ -100,16 +100,16 @@ $chart_outros_data = json_encode(array_column($dados_mensais, 'outros')); // Pre
                 </form>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow mb-6">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4">Total de Novas Ações por Mês</h2>
+            <div id="graph-card" class="bg-white p-6 rounded-lg shadow mb-6">
+                <h2 id="graph-card-titulo" class="text-lg font-semibold text-gray-700 mb-4">Total de Novas Ações por Mês</h2>
                 <div>
                     <canvas id="graficoVolumeEntradas" style="height: 400px;"></canvas>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
+            <div id="table-card" class="bg-white p-6 rounded-lg shadow overflow-x-auto">
                 <table class="w-full text-sm text-left">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <thead id="table-header" class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th class="py-3 px-4">Mês</th>
                             <th class="py-3 px-4">Processos Cíveis</th>
@@ -118,9 +118,9 @@ $chart_outros_data = json_encode(array_column($dados_mensais, 'outros')); // Pre
                             <th class="py-3 px-4">Total Mensal</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="table-body">
                         <?php foreach ($dados_mensais as $dados_mes): ?>
-                        <tr class="border-b hover:bg-gray-50">
+                        <tr class="border-b">
                             <td class="py-3 px-4 font-medium text-gray-900"><?php echo $dados_mes['mes_nome']; ?></td>
                             <td class="py-3 px-4"><?php echo $dados_mes['civeis']; ?></td>
                             <td class="py-3 px-4"><?php echo $dados_mes['trabalhistas']; ?></td>
@@ -131,59 +131,217 @@ $chart_outros_data = json_encode(array_column($dados_mensais, 'outros')); // Pre
                     </tbody>
                 </table>
             </div>
-        </main>
+            
+            </main>
     </div>
 
-    <script src="../js/script.js"></script>
-
-    <script>
+    <script src="../js/app.js"></script> <script src="../js/mobile.js"></script> <script>
     document.addEventListener('DOMContentLoaded', function() {
+        
+        // --- 1. INSTÂNCIAS E DADOS DO GRÁFICO ---
+        let graficoVolumeEntradas = null;
         const ctx = document.getElementById('graficoVolumeEntradas').getContext('2d');
         
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: <?php echo $chart_labels; ?>,
+        // Dados do PHP
+        const chartLabels = <?php echo $chart_labels; ?>;
+        const chartCiveisData = <?php echo $chart_civeis_data; ?>;
+        const chartTrabalhistasData = <?php echo $chart_trabalhistas_data; ?>;
+        const chartOutrosData = <?php echo $chart_outros_data; ?>;
+
+        // --- 2. FUNÇÕES DE OPÇÕES DO GRÁFICO ---
+        function getChartOptions() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const textColor = isDarkMode ? '#E5E7EB' : '#374151';
+            const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { precision: 0, color: textColor }, // Cor eixo Y
+                        grid: { color: gridColor } // Cor grid Y
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: { color: textColor } // Cor eixo X
+                    } 
+                },
+                plugins: {
+                    legend: { 
+                        position: 'top',
+                        labels: { color: textColor } // Cor da legenda
+                    },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                interaction: { mode: 'index', intersect: false }
+            };
+        }
+
+        // --- 3. FUNÇÃO DE RENDERIZAÇÃO DO GRÁFICO ---
+        function renderBarChart() {
+             const options = getChartOptions();
+             const data = {
+                labels: chartLabels,
                 datasets: [
                     {
                         label: 'Processos Cíveis',
-                        data: <?php echo $chart_civeis_data; ?>,
-                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        data: chartCiveisData,
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)', // blue-500
                         borderColor: 'rgba(59, 130, 246, 1)',
                         borderWidth: 1
                     },
                     {
                         label: 'Processos Trabalhistas',
-                        data: <?php echo $chart_trabalhistas_data; ?>,
-                        backgroundColor: 'rgba(249, 115, 22, 0.7)',
+                        data: chartTrabalhistasData,
+                        backgroundColor: 'rgba(249, 115, 22, 0.7)', // orange-500
                         borderColor: 'rgba(249, 115, 22, 1)',
                         borderWidth: 1
                     },
                     {
                         label: 'Outros',
-                        data: <?php echo $chart_outros_data; ?>,
-                        backgroundColor: 'rgba(107, 114, 128, 0.7)', // Cor cinza para "Outros"
+                        data: chartOutrosData,
+                        backgroundColor: 'rgba(107, 114, 128, 0.7)', // gray-500
                         borderColor: 'rgba(107, 114, 128, 1)',
                         borderWidth: 1
                     }
                 ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true, ticks: { precision: 0 } },
-                    x: { grid: { display: false } } // Removido o stacked: true
-                },
-                plugins: {
-                    legend: { position: 'top' },
-                    tooltip: { mode: 'index', intersect: false }
-                },
-                interaction: { mode: 'index', intersect: false }
+            };
+
+            if (graficoVolumeEntradas) {
+                graficoVolumeEntradas.options = options;
+                graficoVolumeEntradas.update();
+            } else {
+                 graficoVolumeEntradas = new Chart(ctx, { type: 'bar', data: data, options: options });
+            }
+        }
+
+        // --- 4. FUNÇÕES DE ATUALIZAÇÃO DE TEMA (HTML) ---
+
+        function atualizarTemaTituloPrincipal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const el = document.getElementById('main-page-title');
+            const cor = isDarkMode ? '#E5E7EB' : '#374151'; // gray-200 / gray-800
+            if (el) el.style.color = cor;
+        }
+
+        function atualizarTemaFiltro() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const card = document.getElementById('filtro-card');
+            const label = document.getElementById('filtro-label');
+            const select = document.getElementById('ano');
+
+            const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
+            const corTextoLabel = isDarkMode ? '#A0AEC0' : '#374151';
+            const corFundoSelect = isDarkMode ? '#4A5568' : '#FFFFFF';
+            const corTextoSelect = isDarkMode ? '#E2E8F0' : '#111827';
+            const corBordaSelect = isDarkMode ? '#4A5568' : '#D1D5DB';
+
+            if (card) {
+                card.style.backgroundColor = corFundoCard;
+                if (label) label.style.color = corTextoLabel;
+                if (select) {
+                    select.style.backgroundColor = corFundoSelect;
+                    select.style.color = corTextoSelect;
+                    select.style.borderColor = corBordaSelect;
+                }
+            }
+        }
+        
+        // (Target 1 e 2: Card e Título do Gráfico)
+        function atualizarTemaGraphCard() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const card = document.getElementById('graph-card');
+            const titulo = document.getElementById('graph-card-titulo');
+            
+            const corFundo = isDarkMode ? '#2D3748' : '#FFFFFF';
+            const corTitulo = isDarkMode ? '#A0AEC0' : '#4B5563'; // gray-400 / gray-600 (text-lg font-semibold text-gray-700)
+
+            if(card) card.style.backgroundColor = corFundo;
+            if(titulo) titulo.style.color = corTitulo;
+        }
+
+        // (Target 3: Tabela e Hover)
+        function atualizarTemaTabela() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const card = document.getElementById('table-card');
+            const header = document.getElementById('table-header');
+            const allRows = document.querySelectorAll('#table-body tr');
+
+            const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
+            const corFundoHeader = isDarkMode ? '#4A5568' : '#F9FAFB';
+            const corTextoHeader = isDarkMode ? '#A0AEC0' : '#374151';
+            const corBordaRow = isDarkMode ? '#4A5568' : '#E5E7EB'; 
+            const corTextoPrincipal = isDarkMode ? '#CBD5E0' : '#374151'; // Para Cíveis, Trabalhistas, Outros
+            const corTextoMes = isDarkMode ? '#FFFFFF' : '#111827';      // Para Mês (font-medium text-gray-900)
+            const corTextoTotal = isDarkMode ? '#E5E7EB' : '#1F2937';    // Para Total (font-semibold)
+            
+            const corFundoRowNormal = 'transparent';
+            const corFundoRowHover = isDarkMode ? '#4A5568' : '#F9FAFB';
+
+            if (card) card.style.backgroundColor = corFundoCard;
+            if (header) {
+                header.style.backgroundColor = corFundoHeader;
+                header.style.color = corTextoHeader;
+            }
+
+            if (allRows.length > 0) {
+                allRows.forEach(row => {
+                    // Não há célula de fallback nesta tabela
+                    row.style.borderColor = corBordaRow; 
+                    row.style.backgroundColor = corFundoRowNormal;
+
+                    row.addEventListener('mouseenter', () => { row.style.backgroundColor = corFundoRowHover; });
+                    row.addEventListener('mouseleave', () => { row.style.backgroundColor = corFundoRowNormal; });
+
+                    const tds = row.querySelectorAll('td');
+                    tds.forEach((td, index) => {
+                        if (index === 0) { // Coluna Mês
+                            td.style.color = corTextoMes;
+                        } else if (index === 4) { // Coluna Total Mensal
+                             td.style.color = corTextoTotal;
+                        } else { // Colunas Cíveis, Trabalhistas, Outros
+                            td.style.color = corTextoPrincipal;
+                        }
+                    });
+                });
+            }
+        }
+        
+        // Target 4 (Paginação) não se aplica aqui.
+
+        // --- 5. EXECUÇÃO E OBSERVADOR ---
+
+        function atualizarTudo() {
+            renderBarChart(); // Atualiza o gráfico (com cores)
+            
+            // Atualiza o HTML
+            atualizarTemaTituloPrincipal(); 
+            atualizarTemaFiltro();
+            atualizarTemaGraphCard();
+            atualizarTemaTabela();
+            // atualizarTemaPaginacao(); // Não tem nesta página
+        }
+
+        // 1. Roda tudo no carregamento inicial
+        atualizarTudo();
+
+        // 2. Cria o observador para mudar o tema
+        const observer = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    atualizarTudo();
+                }
             }
         });
+
+        // 3. Inicia o observador
+        observer.observe(document.documentElement, { attributes: true });
+
+        // Verifique se esta URL base está correta
+        const BASE_URL = 'http://localhost/juridico'; 
     });
-    const BASE_URL = 'http://localhost/juridico'; 
     </script>
 </body>
 </html>

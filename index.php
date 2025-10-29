@@ -81,7 +81,7 @@ try {
 <html lang="pt-br" class="<?php echo $themeClass; ?>">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"   >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sistema Jurídico</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
@@ -147,331 +147,250 @@ try {
                     Últimos Processos Adicionados em <?php echo $ano_selecionado; ?>
                 </h3>
                 
-                <table class="w-full text-sm text-left table-fixed">
-                    <thead id="processos-recentes-header" class="text-xs uppercase">
-                        <tr>
-                            <th class="py-2 px-4 w-2/5">Nº Processo</th>
-                            <th class="py-2 px-4 w-3/5">Autor</th>
-                        </tr>
-                    </thead>
-                    <tbody id="processos-recentes-corpo">
-                        <?php if(empty($processos_recentes)): ?>
+                <div class="table-container">
+                    <table class="w-full text-sm text-left table-fixed">
+                        <thead id="processos-recentes-header" class="text-xs uppercase">
                             <tr>
-                                <td colspan="2" class="text-center py-4">Nenhum processo para este ano.</td>
+                                <th class="py-2 px-4 w-2/5">Nº Processo</th>
+                                <th class="py-2 px-4 w-3/5">Autor</th>
                             </tr>
-                        <?php else: ?>
-                            <?php foreach ($processos_recentes as $processo): ?>
-                                <tr class="border-b dark:border-gray-300">
-                                    <td class="py-4 px-4 whitespace-nowrap" data-label="Nº PROCESSO">
-                                        <?php echo htmlspecialchars($processo['numero_processo']); ?>
-                                    </td>
-                                    
-                                    <td class="py-4 px-4 truncate" title="<?php echo htmlspecialchars($processo['autor']); ?>" data-label="AUTOR">
-                                        <?php echo htmlspecialchars($processo['autor']); ?>
-                                    </td>
+                        </thead>
+                        <tbody id="processos-recentes-corpo">
+                            <?php if(empty($processos_recentes)): ?>
+                                <tr>
+                                    <td colspan="2" class="text-center py-4">Nenhum processo para este ano.</td>
                                 </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                            <?php else: ?>
+                                <?php foreach ($processos_recentes as $processo): ?>
+                                    <tr class="border-b dark:border-gray-300">
+                                        <td class="py-4 px-4 whitespace-nowrap" data-label="Nº PROCESSO">
+                                            <?php echo htmlspecialchars($processo['numero_processo']); ?>
+                                        </td>
+                                        
+                                        <td class="py-4 px-4 truncate" title="<?php echo htmlspecialchars($processo['autor']); ?>" data-label="AUTOR">
+                                            <?php echo htmlspecialchars($processo['autor']); ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
             </div>
         </main>
     </div>
     
-    <script src="js/app.js"></script>
     <script src="js/mobile.js"></script>
+    <script src="js/app.js"></script>   
 
-    <script>
-
+<script>
     document.addEventListener('DOMContentLoaded', function() {
 
         let graficoVolumeEntrada = null;
-
         const ctx = document.getElementById('graficoVolumeEntrada').getContext('2d');
-
-       
-
+        
         // Os dados do gráfico agora são injetados pela nova lógica PHP
-
         const chartData = {
-
             labels: <?php echo json_encode($chart_labels); ?>, // <- Vem do PHP (Jan, Fev, ...)
-
             datasets: [
-
                 { label: 'Processos Cíveis', data: <?php echo json_encode($chart_civeis_data); ?>, backgroundColor: 'rgba(59, 130, 246, 0.7)' },
-
                 { label: 'Processos Trabalhistas', data: <?php echo json_encode($chart_trabalhistas_data); ?>, backgroundColor: 'rgba(249, 115, 22, 0.7)' }
-
             ]
-
         };
 
-
-
         // --- FUNÇÃO DO GRÁFICO (Sem alteração) ---
-
         function getChartOptions() {
-
             const isDarkMode = document.documentElement.classList.contains('dark');
-
             const textColor = isDarkMode ? '#E5E7EB' : '#374151';
-
             const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-
             return {
-
                 responsive: true, maintainAspectRatio: false,
-
                 scales: {
-
                     y: { beginAtZero: true, stacked: false, ticks: { color: textColor }, grid: { color: gridColor } },
-
                     x: { stacked: false, ticks: { color: textColor }, grid: { display: false } }
-
                 },
-
                 plugins: {
-
                     legend: { position: 'top', labels: { color: textColor } },
-
                     tooltip: { mode: 'index', intersect: false }
-
                 },
-
                 interaction: { mode: 'index', intersect: false }
-
             };
-
         }
-
-
 
         function renderChart() {
-
             const options = getChartOptions();
-
             if (graficoVolumeEntrada) {
-
                 graficoVolumeEntrada.options = options;
-
                 graficoVolumeEntrada.update();
-
             } else {
-
                 graficoVolumeEntrada = new Chart(ctx, { type: 'bar', data: chartData, options: options });
-
             }
-
         }
 
-
-
-        // --- FUNÇÃO DA TABELA (Cores atualizadas) ---
-
+        // --- ✅ FUNÇÃO DA TABELA (ESTA É A VERSÃO CORRIGIDA) ---
         function atualizarTemaTabela() {
-
             const isDarkMode = document.documentElement.classList.contains('dark');
-
+            
+            // --- Elementos ---
             const card = document.getElementById('processos-recentes-card');
-
             const titulo = document.getElementById('processos-recentes-titulo');
-
-            const header = document.getElementById('processos-recentes-header');
-
-            const corpo = document.getElementById('processos-recentes-corpo');
-
-
-
-            // Cores do seu CSS
-
+            const header = document.getElementById('processos-recentes-header'); // Desktop <thead>
+            const allRows = document.querySelectorAll('#processos-recentes-corpo tr'); // Todas as linhas <tr>
+            
+            // --- Cores ---
+            // Wrapper
             const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
-
             const corTitulo = isDarkMode ? '#A0AEC0' : '#374151';
-
+            
+            // Desktop <thead>
             const corFundoHeader = isDarkMode ? '#4A5568' : '#F9FAFB';
-
             const corTextoHeader = isDarkMode ? '#A0AEC0' : '#374151';
+            
+            // Cores para Mobile Cards <tr>
+            const corFundoRowCard = isDarkMode ? '#2D3748' : '#FFFFFF';
+            const corBordaRowCard = isDarkMode ? '#5A6578' : '#E5E7EB'; 
 
-            const corTextoCorpo = isDarkMode ? '#E2E8F0' : '#111827'; // Usando E2E8F0 para o texto
-
-
-
+            // Cores para texto <td>
+            const corTextoPrincipal = isDarkMode ? '#E2E8F0' : '#111827'; 
+            const corTextoInfo = isDarkMode ? '#60A5FA' : '#2563EB'; 
+            
+            
             if (card) {
-
+                // 1. Estiliza o Wrapper (comum)
                 card.style.backgroundColor = corFundoCard;
-
                 titulo.style.color = corTitulo;
 
-                header.style.backgroundColor = corFundoHeader;
+                // 2. Estiliza o Header (Desktop) - O CSS o esconde no mobile
+                if (header) {
+                    header.style.backgroundColor = corFundoHeader;
+                    header.style.color = corTextoHeader;
+                }
 
-                header.style.color = corTextoHeader;
+                // 3. Estiliza CADA LINHA (seja desktop row ou mobile card)
+                if (allRows.length > 0) {
+                    allRows.forEach(row => {
+                        
+                        // Pula a linha de "Nenhum processo"
+                        const fallbackCell = row.querySelector('td[colspan="2"]');
+                        if (fallbackCell) {
+                            row.style.backgroundColor = 'transparent';
+                            row.style.border = 'none';
+                            fallbackCell.style.color = corTitulo; // Reusa a cor do título
+                            return;
+                        }
 
-                corpo.style.color = corTextoCorpo;
+                        // Aplica estilo de card (só será visível no mobile, via CSS)
+                        row.style.backgroundColor = corFundoRowCard;
+                        row.style.borderColor = corBordaRowCard; 
+                        row.style.borderWidth = '1px'; // Garante que a borda apareça
 
+                        // Aplica estilo aos <td> (valores)
+                        const tds = row.querySelectorAll('td');
+                        tds.forEach((td, index) => {
+                            // O data-label="Nº PROCESSO" ou o primeiro <td> recebe a cor de info
+                            if (td.getAttribute('data-label') === 'Nº PROCESSO' || index === 0) {
+                                td.style.color = corTextoInfo; 
+                            } else {
+                                td.style.color = corTextoPrincipal;
+                            }
+                        });
+                    });
+                }
             }
-
         }
 
-
-
-        // --- FUNÇÃO DO FILTRO (Cores atualizadas) ---
-
+        // --- FUNÇÃO DO FILTRO (Desktop) ---
         function atualizarTemaFiltro() {
-
             const isDarkMode = document.documentElement.classList.contains('dark');
-
             const card = document.getElementById('filtro-card');
-
             const label = document.getElementById('filtro-label');
-
             const select = document.getElementById('ano');
 
-
-
             // Cores do seu CSS
-
             const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
-
             const corTextoLabel = isDarkMode ? '#A0AEC0' : '#374151';
-
             const corFundoSelect = isDarkMode ? '#4A5568' : '#FFFFFF';
-
             const corTextoSelect = isDarkMode ? '#E2E8F0' : '#111827';
-
             const corBordaSelect = isDarkMode ? '#4A5568' : '#D1D5DB';
 
-
-
             if (card) {
-
                 card.style.backgroundColor = corFundoCard;
-
                 label.style.color = corTextoLabel;
-
                 select.style.backgroundColor = corFundoSelect;
-
                 select.style.color = corTextoSelect;
-
                 select.style.borderColor = corBordaSelect;
-
                 select.style.borderWidth = '1px';
-
             }
-
         }
 
+        // --- FUNÇÃO DO FILTRO (Mobile) ---
+        function atualizarTemaFiltroMobile() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const selectMobile = document.getElementById('filtro-ano-mobile');
 
+            // Cores baseadas na sua outra função de filtro
+            const corFundoSelect = isDarkMode ? '#4A5568' : '#FFFFFF';
+            const corTextoSelect = isDarkMode ? '#E2E8F0' : '#111827';
+            const corBordaSelect = isDarkMode ? '#4A5568' : '#D1D5DB';
+
+            if (selectMobile) {
+                selectMobile.style.backgroundColor = corFundoSelect;
+                selectMobile.style.color = corTextoSelect;
+                selectMobile.style.borderColor = corBordaSelect;
+                selectMobile.style.borderWidth = '1px';
+            }
+        }
 
         // --- FUNÇÃO DOS KPIs E GRÁFICO (Cores atualizadas) ---
-
         function atualizarTemaCardsRestantes() {
-
             const isDarkMode = document.documentElement.classList.contains('dark');
-
             const kpi1 = document.getElementById('kpi-card-1');
-
             const kpi2 = document.getElementById('kpi-card-2');
-
             const kpi3 = document.getElementById('kpi-card-3');
-
-            const graficoCard = document.getElementById('grafico-card');
-
-            const graficoTitulo = document.getElementById('grafico-titulo');
-
-
-
+            
             // Cores do seu CSS
-
             const corFundoCard = isDarkMode ? '#2D3748' : '#FFFFFF';
-
-            const corTitulo = isDarkMode ? '#A0AEC0' : '#374151';
-
-            const corKpiTitulo = isDarkMode ? '#A0AEC0' : '#374151'; // Corrigido para #374151
-
-            const corKpiValor = isDarkMode ? '#ffffffff' : '#000000ff'; // Corrigido para #374151
-
-
-
-            if (graficoCard) {
-
-                graficoCard.style.backgroundColor = corFundoCard;
-
-                graficoTitulo.style.color = corTitulo;
-
-            }
+            const corKpiTitulo = isDarkMode ? '#A0AEC0' : '#374151'; 
+            const corKpiValor = isDarkMode ? '#ffffffff' : '#000000ff'; 
 
             if (kpi1) {
-
                 kpi1.style.backgroundColor = corFundoCard;
-
                 kpi2.style.backgroundColor = corFundoCard;
-
                 kpi3.style.backgroundColor = corFundoCard;
-
-               
-
+                
                 document.querySelectorAll('.kpi-title').forEach(el => el.style.color = corKpiTitulo);
-
                 document.querySelectorAll('.kpi-value').forEach(el => el.style.color = corKpiValor);
-
             }
-
         }
-
-
 
         // --- EXECUÇÃO ---
 
-
-
         // 1. Roda tudo no carregamento inicial
-
         renderChart();
-
         atualizarTemaTabela();
-
         atualizarTemaFiltro();
-
+        atualizarTemaFiltroMobile();
         atualizarTemaCardsRestantes();
 
-
-
         // 2. Cria o observador para mudar o tema
-
         const observer = new MutationObserver((mutationsList) => {
-
             for (const mutation of mutationsList) {
-
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-
                     // Roda tudo de novo quando o tema mudar
-
                     renderChart();
-
                     atualizarTemaTabela();
-
                     atualizarTemaFiltro();
-
+                    atualizarTemaFiltroMobile();
                     atualizarTemaCardsRestantes();
-
                 }
-
             }
-
         });
 
-
-
         // 3. Inicia o observador
-
         observer.observe(document.documentElement, { attributes: true });
 
-}); // Fim do DOMContentLoaded
-
-    const BASE_URL = 'http://localhost/juridico'
-
+    }); // Fim do DOMContentLoaded
 </script>
 </body>
 </html>

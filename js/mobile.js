@@ -67,7 +67,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- (ADICIONE SEU OUTRO JS AQUI, como o do dark mode) ---
+    const filtroMobile = document.getElementById('filtro-ano-mobile');
+    
+    if (filtroMobile) {
+        filtroMobile.addEventListener('change', function() {
+            // Pega o ano que o usuário selecionou
+            const anoSelecionado = this.value;
+            
+            // Cria um objeto URL a partir da localização atual
+            // (Isso preserva outros parâmetros GET que possam existir)
+            const url = new URL(window.location.href);
+            
+            // Atualiza ou adiciona o parâmetro 'ano'
+            url.searchParams.set('ano', anoSelecionado);
+            
+            // Redireciona a página para a nova URL com o filtro aplicado
+            window.location.href = url.toString();
+        });
+    }
     
     // Exemplo: Lógica do Dark Mode (você já deve ter isso)
     const themeToggle = document.getElementById('theme-toggle');
